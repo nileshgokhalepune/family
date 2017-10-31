@@ -5,7 +5,7 @@ export class Board extends Component {
   state = {
     users: []
   };
-  componentDidMount() {
+  componentWillMount() {
     fetch('/users')
       .then(res => res.json())
       .then(users => this.setState({

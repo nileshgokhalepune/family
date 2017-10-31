@@ -2,7 +2,15 @@ import React, { Component } from 'react';
 
 class Login extends Component {
   login(event) {
-      
+    event.preventDefault();
+    fetch('/users/ticket', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.state),
+    }).then(res => res.json())
+      .then(obj => this.setState(obj));
   }
 
   onFieldChange(event) {
@@ -15,7 +23,7 @@ class Login extends Component {
 
   render() {
     return (
-      <form onChange={(event) => this.onFieldChange(event)} onSubmit={(event) => this.login(event)}>
+      <form onChange={(event) => this.onFieldChange(event)}>
         <div className="form-group">
             <label>User name:
                 <input className="form-control" name="userName"  type="text" id="userName"/>
@@ -23,7 +31,7 @@ class Login extends Component {
             <label>Password:
                 <input className="form-control" name="password" type="password" id="password"/>
             </label>
-            <input type="submit" id="submit" className="btn btn-primary" value="Login" />
+            <button className="btn btn-primary" onClick={(event) => this.login(event)}>Login</button> 
         </div>
       </form>
     )

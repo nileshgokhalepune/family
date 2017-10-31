@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import './App.css';
 import Header from '../Header';
 import Main from './Main';
+import { withRouter } from 'react-router-dom';
 
 class App extends Component {
   state = {
     hash: '',
     store: ''
   }
+
   componentWillMount() {
     fetch('/users/hash')
       .then(res => res.json())
@@ -21,6 +23,7 @@ class App extends Component {
         })
       });
   }
+
   render() {
     if (this.state.store) {
       fetch('/users/valid', {
@@ -28,7 +31,8 @@ class App extends Component {
         data: this.state.store
       });
     } else {
-      this.props.history.push('/login');
+      if (this.props.history && this.props.history.location.pathname !== '/login')
+        this.props.history.push('/login');
     }
     return (
       <div className="App">
@@ -41,4 +45,5 @@ class App extends Component {
   }
 }
 
-export default App;
+const AppWithRouter = withRouter(App);
+export default AppWithRouter;

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var crypto = require('crypto');
+var db = require('../libraries/database');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -54,7 +55,23 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/hash', function(req, res, next) {
-  var cipher = crypto.createCipher('aes192', req.ip);
+  res.json(cipherText(req.ip));
+});
+
+router.post('/ticket', function(req, res) {
+  var encrypted = cipherText(req.ip);
+  db.auth(req.body.userName, req.body.password, function(err, member) {
+    if (err) {
+      res.status(404);
+      res.send();
+    } else {
+      res.send("success");
+    }
+  });
+});
+
+function cipherText(text) {
+  var cipher = crypto.createCipher('aes192', text);
   let encrypted = '';
   cipher.on('readable', () => {
     const data = cipher.read();
@@ -65,9 +82,9 @@ router.get('/hash', function(req, res, next) {
   cipher.on('end', () => {
     console.log(encrypted);
   });
-  cipher.write(req.ip);
+  cipher.write(text);
   cipher.end();
-  res.json(encrypted);
-});
+  return encrypted;
+}
 
 module.exports = router;
