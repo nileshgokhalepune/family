@@ -65,7 +65,11 @@ router.post('/ticket', function(req, res) {
       res.status(404);
       res.send();
     } else {
-      res.send("success");
+      var ticket = cipherText(member.userName + Date.now() + req.ip);
+      res.json({
+        encrypted: ticket,
+        user: member
+      });
     }
   });
 });

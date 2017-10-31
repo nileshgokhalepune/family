@@ -15,7 +15,7 @@ var memberSchema = new mongoose.Schema({
   family: Array
 });
 
-var memberModel = mongoose.model('Member', memberSchema);
+var memberModel = mongoose.model('member', memberSchema, 'member');
 
 memberModel.auth = function(username, password, callback) {
   var user = memberModel.findOne({
@@ -26,10 +26,9 @@ memberModel.auth = function(username, password, callback) {
       console.bind(console, 'Error while trying to retrieve user!');
       throw err;
     } else if (!member) {
-      console.bind(console, "Not found");
       callback("Not found", null);
     } else {
-      callback(member);
+      callback(null,member);
     }
   });
 }

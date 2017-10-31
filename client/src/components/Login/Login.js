@@ -10,7 +10,10 @@ class Login extends Component {
       },
       body: JSON.stringify(this.state),
     }).then(res => res.json())
-      .then(obj => this.setState(obj));
+      .then(obj => {
+        this.setState(obj)
+        this.props.history.push('/');
+      });
   }
 
   onFieldChange(event) {
