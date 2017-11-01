@@ -74,6 +74,33 @@ router.post('/ticket', function(req, res) {
   });
 });
 
+router.get('/data', function(req, res, next) {
+  var deciphered = decipherText(req.query.parm);
+})
+
+router.get('/valid', function(req, res, next) {
+
+  res.json({
+    valid: true
+  });
+})
+
+function decipherText(cipher) {
+  let decrypted = '';
+  var decipher = crypto.createDecipher('aes192', cipher);
+  decipher.on('readable', () => {
+    const data = decipher.read();
+    if (data)
+      decrypted += data.toString('utf8');
+  });
+  decipher.on('end', () => {
+    console.log(decrypted);
+  });
+  decipher.write(cipher, 'hex');
+  decipher.end();
+  return decrypted;
+}
+
 function cipherText(text) {
   var cipher = crypto.createCipher('aes192', text);
   let encrypted = '';

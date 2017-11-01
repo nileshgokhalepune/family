@@ -1,25 +1,24 @@
 import React, { Component } from 'react';
-
+import { Security } from '../../service/Security';
 class Login extends Component {
+  parms={
+  };
+  loggedIn = false;
+
+
   login(event) {
     event.preventDefault();
-    fetch('/users/ticket', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(this.state),
-    }).then(res => res.json())
-      .then(obj => {
-        this.setState(obj)
-        this.props.history.push('/');
-      });
+    Security.login(this.parms).then(data => {
+      this.loggedIn = true;
+      this.props.handler();
+    });
   }
 
   onFieldChange(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
+    this.parms[event.target.name] = event.target.value;
+  // this.setState({
+  //   [event.target.name]: event.target.value
+  // });
   }
 
   stateChanged(event) {}

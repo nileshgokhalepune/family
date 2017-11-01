@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { Member } from '../Member/Member';
-
+import { Security } from '../../service/Security';
 export class Board extends Component {
   state = {
-    users: []
+    user: null
   };
   componentWillMount() {
-    fetch('/users')
+    fetch('/users/data?parm=' + Security.get())
       .then(res => res.json())
-      .then(users => this.setState({
-        users
+      .then(user => this.setState({
+        user
       }));
   }
 
@@ -28,8 +28,8 @@ export class Board extends Component {
     var peers = null;
     var subordinates = null;
     var parents = null;
-    if (this.state) {
-      let family = this.state.family;
+    if (this.state && this.state.user) {
+      let family = this.state.user.family;
       peers = family.map((f, i) => {
         return f.type === this.peer ? <Member value={f} key={i} callbackPosts={(id) => alert('called' + id) }/> : '';
       });
@@ -39,9 +39,8 @@ export class Board extends Component {
       parents = family.map((f, i) => {
         return f.type === this.parents ? <Member value={f} key={i} callbackPosts={(id) => alert('called' + id) }/> : '';
       });
-    }
-    return (
-      <div className="family-container">
+      return (
+        <div className="family-container">
         <div className="you">
             {this.renderMember(this.state)}
         </div>
@@ -69,7 +68,11 @@ export class Board extends Component {
             Here we show all the posts
         </div>
       </div>
-    )
+      )
+
+    } else {
+      return null
+    }
   }
 }
 
