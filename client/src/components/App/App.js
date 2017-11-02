@@ -7,6 +7,7 @@ import { Security } from '../../service/Security';
 import { Status } from '../../service/Enums';
 import { Loading } from '../Loading';
 import Login from '../Login/Login';
+import '../../../node_modules/font-awesome/css/font-awesome.css';
 class App extends Component {
 
   constructor(props) {
@@ -64,11 +65,9 @@ class App extends Component {
 
     return (
       <div className="App">
-      <Header />
-     <h1>    
+      <Header /> 
        {loader}
-       {component}
-    </h1>
+       {component} 
     </div>
       );
 

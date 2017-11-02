@@ -65,7 +65,7 @@ router.post('/ticket', function(req, res) {
       res.status(404);
       res.send();
     } else {
-      var ticket = cipherText(member.userName + Date.now() + req.ip);
+      var ticket = cipherText(member._doc._id + ',' + member._doc.username + ',' + Date.now() + ',' + req.ip);
       res.json({
         encrypted: ticket,
         user: member
@@ -76,6 +76,19 @@ router.post('/ticket', function(req, res) {
 
 router.get('/data', function(req, res, next) {
   var deciphered = decipherText(req.query.parm);
+  var arr = deciphered.split(',');
+  db.findMember(arr[0], function(err, member) {
+    if (err) {
+      res.json({
+        message: "Not able to find member"
+      });
+    }
+    if (member) {
+      res.json({
+       member: member._doc
+      });
+    }
+  });
 })
 
 router.get('/valid', function(req, res, next) {
@@ -85,37 +98,19 @@ router.get('/valid', function(req, res, next) {
   });
 })
 
-function decipherText(cipher) {
-  let decrypted = '';
-  var decipher = crypto.createDecipher('aes192', cipher);
-  decipher.on('readable', () => {
-    const data = decipher.read();
-    if (data)
-      decrypted += data.toString('utf8');
-  });
-  decipher.on('end', () => {
-    console.log(decrypted);
-  });
-  decipher.write(cipher, 'hex');
-  decipher.end();
-  return decrypted;
+function decipherText(text) {
+  try {
+    var decipher = crypto.createDecipher('aes192', 'mypassword');
+    return decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 }
 
 function cipherText(text) {
-  var cipher = crypto.createCipher('aes192', text);
-  let encrypted = '';
-  cipher.on('readable', () => {
-    const data = cipher.read();
-    if (data)
-      encrypted += data.toString('hex');
-  });
-
-  cipher.on('end', () => {
-    console.log(encrypted);
-  });
-  cipher.write(text);
-  cipher.end();
-  return encrypted;
+  var cipher = crypto.createCipher('aes192', 'mypassword');
+  return cipher.update(text, 'utf8', 'hex') + cipher.final('hex');
 }
 
 module.exports = router;

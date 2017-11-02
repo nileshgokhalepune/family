@@ -16,9 +16,6 @@ class Login extends Component {
 
   onFieldChange(event) {
     this.parms[event.target.name] = event.target.value;
-  // this.setState({
-  //   [event.target.name]: event.target.value
-  // });
   }
 
   stateChanged(event) {}

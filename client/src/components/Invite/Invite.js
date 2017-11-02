@@ -1,17 +1,29 @@
 import React, { Component } from 'react';
 
 class Invite extends Component {
-    render(){
-        return(
-            <form onChange={(event) => this.onFieldChange(event)}>
-            <div>
+  parms= {};
+  navigateToBoard(event) {
+    this.props.history.push('/');
+  }
+
+  onFieldChange(event) {
+    this.parms[event.target.name] = event.target.value;
+  }
+
+  render() {
+    return (
+      <form onChange={(event) => this.onFieldChange(event)}>
+            <div style={{
+        textAlign: 'left',
+        margin: '10px'
+      }}>
                 <div className="form-group">
-                    <label for="memberName"> Name:
+                    <label htmlFor="memberName"> Name:
                         <input className="form-control" type="text" name="memberName" id="memberName" />
                     </label>
                 </div>
                 <div className="form-group">
-                <label>Email:
+                <label htmlFor="memberEmail">Email:
                     <input className="form-control"  type="email" name="memberEmail" />
                 </label>
                 </div>
@@ -25,13 +37,17 @@ class Invite extends Component {
                         <option>Brother</option>
                         <option>Aunt</option>
                         <option>Uncle</option>
+                        <option>Wife</option>
+                        <option>Husband</option>
                     </select>
                 </label>
-                <button onClick={this.navigateToBoard.bind(this)}>Send Invite</button>
+                <div>
+                    <button className="btn btn-primary" onClick={this.navigateToBoard.bind(this)}>Send Invite</button>
+                </div>
             </div>
         </form>
-        );
-    }
+      );
+  }
 }
 
 export default Invite;

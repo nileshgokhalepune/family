@@ -28,9 +28,19 @@ memberModel.auth = function(username, password, callback) {
     } else if (!member) {
       callback("Not found", null);
     } else {
-      callback(null,member);
+      callback(null, member);
     }
   });
 }
+
+memberModel.findMember = function(objectId, callback) {
+  var user = memberModel.findOne({
+    _id: objectId
+  }, {
+    "password": 0
+  }, function(err, member) {
+    callback(err, member);
+  });
+};
 
 module.exports = memberModel;

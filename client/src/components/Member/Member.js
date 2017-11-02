@@ -10,18 +10,19 @@ export class Member extends Component {
   showLikes(event) {}
 
   navigateToInvite() {
+    debugger;
     this.props.history.push('/invite');
   }
 
   render() {
     let display = '';
-    let type = this.props.value.type;
+    let type = this.props.value.user.type;
     if (type === 'self') {
       display = 'You'
     } else {
       display = 'Your '; // + this.props.value.relation;
     }
-    let showPeeks = type === 'self' ? '' : (
+    let showPeeks = type === 'self' ? null : (
       <div className="peeks">
             <i title="Posts" className="fa fa-list" onClick={(event) => this.showPosts(event)}></i>
         </div>);
@@ -29,16 +30,16 @@ export class Member extends Component {
     let inviteLink = type === 'self' ?
       <div>
           <i className="fa fa-plus-circle" title="Add member" onClick={this.navigateToInvite.bind(this) }></i>
-    </div> : '';
+    </div> : null;
     return (
       <div className="member">
         <div type="member">
-                <div className="name">{this.props.value.name}</div>
-                {display}
+            <div className="name">{this.props.value.name}</div>
+            {display}
         </div>
-        {showPeeks} 
-        {inviteLink}
-      </div>
+          {showPeeks} 
+          {inviteLink}
+        </div>
     )
   }
 }

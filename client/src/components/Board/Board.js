@@ -8,8 +8,8 @@ export class Board extends Component {
   componentWillMount() {
     fetch('/users/data?parm=' + Security.get())
       .then(res => res.json())
-      .then(user => this.setState({
-        user
+      .then(data => this.setState({
+        user: data.member
       }));
   }
 
@@ -21,7 +21,7 @@ export class Board extends Component {
   }
 
   renderMember(state) {
-    return <Member value={state} />
+    return <Member value={state} {...this.props} />
   }
 
   render() {
