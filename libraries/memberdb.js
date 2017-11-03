@@ -44,3 +44,30 @@ memberModel.findMember = function(objectId, callback) {
 };
 
 module.exports = memberModel;
+var Schema = mongoose.Schema,
+ObjectId = Schema.ObjectId
+var inviteSchema = new mongoose.Schema({
+  userId: ObjectId,
+  guestName: String,
+  guestEmail: String,
+  guestRelation: String
+});
+
+var inviteModel = mongoose.model('invite', inviteSchema, 'invite');
+
+inviteModel.save = function(data, callback) {
+  var objectId = new mongoose.Types.ObjectId();
+  var guest = new inviteModel({
+    _id: objectId,
+    guestName: data.guestName,
+    guestEmail: data.guestEmail,
+    guestRelation: data.relation,
+    userId: data.userId
+  });
+  guest.save(function(err, data) {
+    if (err) console.log(err)  ;
+    console.log('Saved');
+    callback(true);
+  });
+
+}

@@ -8,8 +8,8 @@ import { Status } from '../../service/Enums';
 import { Loading } from '../Loading';
 import Login from '../Login/Login';
 import '../../../node_modules/font-awesome/css/font-awesome.css';
+ 
 class App extends Component {
-
   constructor(props) {
     super(props);
     this.loggedin = this.handleLogin.bind(this);
@@ -20,7 +20,7 @@ class App extends Component {
       this.setState({
         loggedIn: true,
         store: data
-      })
+      });
     });
   }
   state = {
@@ -65,7 +65,7 @@ class App extends Component {
 
     return (
       <div className="App">
-      <Header /> 
+      <Header {...this.props} /> 
        {loader}
        {component} 
     </div>

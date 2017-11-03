@@ -9,8 +9,7 @@ export class Member extends Component {
 
   showLikes(event) {}
 
-  navigateToInvite() {
-    debugger;
+  navigateToInvite() { 
     this.props.history.push('/invite');
   }
 

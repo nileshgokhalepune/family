@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-
+import { Security } from '../../service/Security';
 class Invite extends Component {
   parms= {};
   navigateToBoard(event) {
-    this.props.history.push('/');
+    event.preventDefault();
+    Security.invite(this.parms, Security.get()).then(data => {
+      if (data && data.message) console.log(`Message:${data.message}`);
+      this.props.history.push('/');
+    });
   }
 
   onFieldChange(event) {

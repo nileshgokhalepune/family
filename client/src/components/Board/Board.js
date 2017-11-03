@@ -6,11 +6,11 @@ export class Board extends Component {
     user: null
   };
   componentWillMount() {
-    fetch('/users/data?parm=' + Security.get())
-      .then(res => res.json())
-      .then(data => this.setState({
+    Security.getData().then(data => {
+      this.setState({
         user: data.member
-      }));
+      });
+    })
   }
 
   constructor(props) {
