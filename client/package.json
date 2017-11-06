@@ -15,5 +15,5 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://yourfamily.herokuapp.com:3001"
+  "proxy": "http://localhost:5000"
 }
