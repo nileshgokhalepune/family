@@ -6,6 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
+var compression = require('compression');
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 
@@ -15,6 +17,7 @@ var dev = app.get('env') !== 'production';
 if (!dev) {
   app.disable('x-powered-by');
   app.use(morgan('common'));
+  app.use(compression());
 }
 
 // view engine setup
@@ -37,7 +40,7 @@ app.use(bodyParser.urlencoded({
 app.use('/', index);
 app.use('/users', users);
 
-mongoose.connect('mongodb://localhost/family', {
+mongoose.connect('mongodb://nilesh:gremlin@ds243085.mlab.com:43085/family', {
   useMongoClient: true
 });
 
