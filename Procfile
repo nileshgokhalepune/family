@@ -1,1 +1,1 @@
-web: PORT=3001 node ./bin/www
+web: node ./bin/www

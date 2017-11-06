@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "node ./bin/www PORT=3001",
+    "start": "concurrently \"npm run server\"",
+    "server": "node ./bin/www",
     "client": "cd client && npm start",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
