@@ -150,19 +150,6 @@ router.post('/invite', function(req, res, next) {
       message: `Successfully invited ${guest.guestName} to be part of your family!!!`
     })
   })
-// transport.sendMail(mailOptions, (error, info) => {
-//   if (error) {
-//     res.statusCode = 500;
-//     res.json({
-//       message: 'Failed to send invitation'
-//     });
-//     return;
-//   }
-//   res.statusCode = 200;
-//   res.json({
-//     message: `Successfully invited ${guest.guestName} to be part of your family!!!`
-//   })
-// });
 });
 
 function decipherText(text) {

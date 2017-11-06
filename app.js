@@ -5,11 +5,17 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-
+var morgan = require('morgan');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+var dev = app.get('env') !== 'production';
+
+if (!dev) {
+  app.disable('x-powered-by');
+  app.use(morgan('common'));
+}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
