@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"node ./bin/www\" \"cd client && npm start\"",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "node ./bin/www",
+    "client": "cd client && npm start",
     "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "dependencies": {
