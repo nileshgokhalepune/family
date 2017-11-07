@@ -40,15 +40,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+// app.route('/', index);
+// app.route('/users', users);
 app.use('/', index);
 app.use('/users', users);
-
-app._router.stack.forEach(middleware => {
-  if (middleware.route)
-    console.log(Object.keys(middleware.route.methods) + " -> " + middleware.route.path);
-});
-console.log(os.hostname());
-console.log(app.get('port'));
 
 mongoose.connect('mongodb://nilesh:gremlin@ds243085.mlab.com:43085/family', {
   useMongoClient: true
