@@ -8,7 +8,7 @@ import { Status } from '../../service/Enums';
 import { Loading } from '../Loading';
 import Login from '../Login/Login';
 import '../../../node_modules/font-awesome/css/font-awesome.css';
- 
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -16,6 +16,8 @@ class App extends Component {
   }
 
   handleLogin(event) {
+    fetch('/message').then(res => res.json)
+      .then(data => alert(data.message));
     Security.getHash().then(data => {
       this.setState({
         loggedIn: true,
@@ -34,12 +36,19 @@ class App extends Component {
         store: value
       });
       if (this.state.store) {
-        Security.validate(this.state.store).then(data => {
-          this.status = Status.Loaded;
-          this.setState({
-            status: Status.Loaded,
-            loggedIn: true
-          });
+        Security.validate().then(data => {
+          if (data.valid) {
+            this.status = Status.Loaded;
+            this.setState({
+              status: Status.Loaded,
+              loggedIn: true
+            });
+          } else {
+            this.setState({
+              store: null,
+              status: Status.Loaded
+            });
+          }
         });
       } else {
         this.setState({

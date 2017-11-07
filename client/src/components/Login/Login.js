@@ -11,7 +11,7 @@ class Login extends Component {
     Security.login(this.parms).then(data => {
       this.loggedIn = true;
       this.props.handler();
-    });
+    }).catch(err => alert(err));
   }
 
   onFieldChange(event) {

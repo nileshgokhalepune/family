@@ -31,10 +31,10 @@ app.use(logger('dev'));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
 app.use(cookieParser());
-//path.join(__dirname, 'client/build')
 if (process.env.NODE_ENV === "production")
-  app.use(express.static("client/build"));
+  app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -44,7 +44,12 @@ app.use(bodyParser.urlencoded({
 // app.route('/users', users);
 app.use('/', index);
 app.use('/users', users);
-
+app.get('/message', function(req, res, next) {
+  res.contentType('application/json');
+  res.json({
+    message: "Welcome"
+  });
+});
 mongoose.connect('mongodb://nilesh:gremlin@ds243085.mlab.com:43085/family', {
   useMongoClient: true
 });

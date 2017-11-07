@@ -6,10 +6,18 @@ export class Board extends Component {
     user: null
   };
   componentWillMount() {
-    Security.getData().then(data => {
-      this.setState({
-        user: data.member
-      });
+    Security.validate().then(data => {
+      debugger;
+      if (data.valid) {
+        Security.getData().then(data => {
+          this.setState({
+            user: data.member
+          });
+        })
+      }
+    }).catch(err => {
+      alert('Invalid session');
+      this.props.history.push('/login');
     })
   }
 

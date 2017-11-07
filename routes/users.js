@@ -81,7 +81,8 @@ router.post('/ticket', function(req, res) {
   var encrypted = cipherText(req.ip);
   db.auth(req.body.userName, req.body.password, function(err, member) {
     if (err) {
-      res.status(404);
+      res.statusCode = 404;
+      res.statusMessage = "Invalid username or password";
       res.send();
     } else {
       var cipherJson = {
@@ -118,8 +119,22 @@ router.get('/data', function(req, res, next) {
 })
 
 router.get('/valid', function(req, res, next) {
+  if (req.headers.authorization)
+    var authHeader = req.headers.authorization.split(' ')[1];
+  res.statusCode = 200;
+  if (authHeader && authHeader !== undefined && authHeader !== 'undefined') {
+    var obj = decipherText(authHeader);
+    if (obj.date) {
+      res.json({
+        message: 'Active',
+        valid: true
+      });
+      return;
+    }
+  }
   res.json({
-    valid: true
+    message: 'Inactive',
+    valid: false
   });
 });
 
