@@ -17,6 +17,11 @@ var transport = mailer.createTransport(smtpTransport({
   }
 }));
 
+router.use(function timelog(req, res, next) {
+  console.log('Time: ' + Date.now());
+  next();
+});
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.json([{

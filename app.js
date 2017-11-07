@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var compression = require('compression');
-
+var os = require('os');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
@@ -42,6 +42,13 @@ app.use(bodyParser.urlencoded({
 }));
 app.use('/', index);
 app.use('/users', users);
+
+app._router.stack.forEach(middleware => {
+  if (middleware.route)
+    console.log(Object.keys(middleware.route.methods) + " -> " + middleware.route.path);
+});
+console.log(os.hostname());
+console.log(app.get('port'));
 
 mongoose.connect('mongodb://nilesh:gremlin@ds243085.mlab.com:43085/family', {
   useMongoClient: true
