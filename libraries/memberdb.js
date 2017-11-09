@@ -51,10 +51,19 @@ memberModel.save = function(user, callback) {
   if (user) {
     user.save(function(err, doc) {
       if (err) callback(err, null);
-      callback(null, doc);
+      var member = doc.toObject();
+      delete member.password;
+      delete member.salt;
+      callback(null, member);
     });
   } else {
     callback('User information cannot be empty', null);
+  }
+}
+
+memberModel.addFamilyMember = function(user, familyMember, callback) {
+  if (user && familyMember) {
+    
   }
 }
 

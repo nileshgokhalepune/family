@@ -223,7 +223,7 @@ router.post('/create', function(req, res, next) {
       salt: salt
     });
 
-    db.save(user, function(err, doc) {
+    db.memberModel.save(user, function(err, doc) {
       if (err)
         throw err;
       res.json(doc);
@@ -231,4 +231,38 @@ router.post('/create', function(req, res, next) {
   }
 });
 
+router.post('/relate', function(req, res, next) {
+  var originalUserId = req.body.userId;
+  var newUserId = req.body.newUserId;
+  var relation = req.body.relation;
+  db.memberModel.findMember(originalUserId, function(err, member) {
+    if (err || !member) {
+      res.statusCode = 404;
+      res.statusMessage = "User who invited was not found";
+      res.send();
+      return;
+    } else {
+      db.memberModel.findMember(newUserId, function(err, other) {
+        if (err || !other) {
+          res.statusCode = 404;
+          res.statusMessage = "The new member was not found";
+          res.send();
+          return;
+        } else {
+          other.relate = relation;
+          member.family.push(other);
+          member.save();
+          member.relate = getCounterRelation(relation);
+          other.family.push(member);
+        }
+      })
+    }
+  });
+});
+
 module.exports = router;
+
+
+function getCounterRelation(relation, targetGender) {
+  return;
+}

@@ -23,7 +23,9 @@ router.get('/register', function(req, res, next) {
     db.inviteModel.findInvite(decipher.inviteId, function(err, invite) {
       viewModel.name = invite._doc.guestName.split(' ')[0];
       viewModel.lastName = invite._doc.guestName.split(' ')[1];
-      viewModel.email = invite._doc.guestEmail
+      viewModel.email = invite._doc.guestEmail;
+      viewModel.userId = decipher.userId;
+      viewModel.relation = invite._doc.guestRelation;
       res.render('register', {
         viewModel
       });
