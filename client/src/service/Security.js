@@ -52,20 +52,9 @@ export const Security = {
         .then(this.parseJson)
         .then(data => resolve(data))
         .catch(error => reject(error));
-    // then(res=> res.json())
-    //   .then(data => {
-    //     // var data = res.json();
-    //     // if (res.status !== 200) {
-    //     //   reject(data);
-    //     // } else {
-    //     this.ticket = data.encrypted;
-    //     Security.setHash(data.encrypted);
-    //     resolve(data);
-    //   // }
-    //   }).catch(err => reject(err));
     });
   },
-  invite(guest, store) {
+  invite(guest) {
     return new Promise((resolve, reject) => {
       fetch('/users/invite', {
         method: 'POST',
@@ -73,7 +62,8 @@ export const Security = {
         body: JSON.stringify({
           guest: guest
         })
-      }).then(res => res.json())
+      }).then(this.checkstatus)
+        .then(this.parseJson)
         .then(data => resolve(data))
         .catch(err => reject(err));
     })

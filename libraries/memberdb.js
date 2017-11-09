@@ -12,14 +12,18 @@ var memberSchema = new mongoose.Schema({
   password: String,
   salt: String,
   locations: Array,
-  family: Array
+  family: Array,
+  type: String
 });
 
 var memberModel = mongoose.model('member', memberSchema, 'member');
 
 memberModel.auth = function(username, password, callback) {
   var user = memberModel.findOne({
-    username: username
+    userName: username
+  }, {
+    password: 1,
+    salt: 1
   }, function(err, member) {
     if (err) {
       callback(err, null);
@@ -43,9 +47,21 @@ memberModel.findMember = function(objectId, callback) {
   });
 };
 
-module.exports = memberModel;
+memberModel.save = function(user, callback) {
+  if (user) {
+    user.save(function(err, doc) {
+      if (err) callback(err, null);
+      callback(null, doc);
+    });
+  } else {
+    callback('User information cannot be empty', null);
+  }
+}
+
+module.exports.memberModel = memberModel;
+
 var Schema = mongoose.Schema,
-ObjectId = Schema.ObjectId
+  ObjectId = Schema.ObjectId
 var inviteSchema = new mongoose.Schema({
   userId: ObjectId,
   guestName: String,
@@ -59,15 +75,44 @@ inviteModel.save = function(data, callback) {
   var objectId = new mongoose.Types.ObjectId();
   var guest = new inviteModel({
     _id: objectId,
-    guestName: data.guestName,
-    guestEmail: data.guestEmail,
-    guestRelation: data.relation,
+    guestName: data.memberName,
+    guestEmail: data.memberEmail,
+    guestRelation: data.memberrelation,
     userId: data.userId
   });
   guest.save(function(err, data) {
-    if (err) console.log(err)  ;
+    if (err) {
+      console.log(err) ;
+      callback(err, null);
+    }
     console.log('Saved');
-    callback(true);
+    callback(err, data);
   });
-
 }
+
+inviteModel.findInvites = function(userid, callback) {
+  inviteModel.find({
+    userId: userid
+  }, function(err, invite) {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, invite);
+    }
+  });
+}
+inviteModel.findInvite = function(inviteId, callback) {
+  inviteModel.find({
+    _id: inviteId
+  }, function(err, invite) {
+    if (err) {
+      callback(err, null);
+    } else if (invite.length > 1) {
+      callback("Multiple invitations found", null);
+    } else {
+      callback(null, invite[0]);
+    }
+  });
+}
+
+module.exports.inviteModel = inviteModel;

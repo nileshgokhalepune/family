@@ -2,4 +2,24 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  form(onsubmit="submituserform()",action="/users/create",method="post",name="userform")
+    div
+      label Username
+      input(type="text",name="userName")
+    div
+      label Password
+      input(type="password",name="password")
+    div
+      label Name
+      input(type="fullname",name="name")
+    div
+      label Name
+      input(type="fullname",name="lastName")
+    div
+      label Date of birth
+      input(type="date",name="dateofBirth")
+    div
+      label Type
+      input(type="text",value="self",name="type")
+    div
+      button(onclick="submitForm()") Submit

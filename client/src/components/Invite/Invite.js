@@ -7,6 +7,9 @@ class Invite extends Component {
     Security.invite(this.parms, Security.get()).then(data => {
       if (data && data.message) console.log(`Message:${data.message}`);
       this.props.history.push('/');
+    }).catch(err => {
+      alert(err);
+      this.props.history.push('/');
     });
   }
 

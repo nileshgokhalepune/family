@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    div(class="form-group")
+        label Name
+        input(type="text",class="form-control",name="name",value="#{viewModel.name}")
+        label Lastname
+        input(type="text",class="form-control",name="lastName",value="#{viewModel.lastName}")
+        label Username
+        input(type="text",class="form-control",name="userName")
+        label password
+        input(type="password",class="form-control",name="password")
+        label Retype password
+        input(type="password",class="form-control",name="retypepassword")

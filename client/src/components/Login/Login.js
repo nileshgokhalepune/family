@@ -9,6 +9,7 @@ class Login extends Component {
   login(event) {
     event.preventDefault();
     Security.login(this.parms).then(data => {
+      Security.setHash(data.encrypted);
       this.loggedIn = true;
       this.props.handler();
     }).catch(err => alert(err));

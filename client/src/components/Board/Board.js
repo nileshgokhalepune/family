@@ -6,8 +6,7 @@ export class Board extends Component {
     user: null
   };
   componentWillMount() {
-    Security.validate().then(data => {
-      debugger;
+    Security.validate().then(data => { 
       if (data.valid) {
         Security.getData().then(data => {
           this.setState({

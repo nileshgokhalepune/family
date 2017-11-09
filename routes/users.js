@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
-var crypto = require('crypto');
 var db = require('../libraries/memberdb');
 var mailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
+var config = require('../libraries/config');
+var scrambler = require('../libraries/mycrypto');
+var moment = require('moment');
+
 var sendmail = require('sendmail')({
   silent: true
 });
@@ -74,37 +77,44 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/hash', function(req, res, next) {
-  res.json(cipherText(req.ip));
+  res.json(scrambler.cipherText(req.ip));
 });
 
 router.post('/ticket', function(req, res) {
-  var encrypted = cipherText(req.ip);
-  db.auth(req.body.userName, req.body.password, function(err, member) {
+  var encrypted = scrambler.cipherText(req.ip);
+  db.memberModel.auth(req.body.userName, req.body.password, function(err, member) {
     if (err) {
       res.statusCode = 404;
       res.statusMessage = "Invalid username or password";
       res.send();
     } else {
-      var cipherJson = {
-        memberId: member._doc._id,
-        memberName: member._doc.username,
-        date: Date.now(),
-        ip: req.ip,
-        memberEmail: member._doc.email
-      };
-      var ticket = cipherText(JSON.stringify(cipherJson));
-      res.json({
-        encrypted: ticket,
-        user: member
-      });
+      var hashed = scrambler.hashpassword(req.body.password, member.salt);
+      if (hashed === member.password) {
+        var cipherJson = {
+          memberId: member._doc._id,
+          memberName: member._doc.username,
+          date: Date.now(),
+          ip: req.ip,
+          memberEmail: member._doc.email
+        };
+        var ticket = scrambler.cipherText(JSON.stringify(cipherJson));
+        res.json({
+          encrypted: ticket,
+          user: member
+        });
+      } else {
+        res.status = 401;
+        res.statusMessage = "Invalid username or password";
+        res.send();
+      }
     }
   });
 });
 
 router.get('/data', function(req, res, next) {
-  var deciphered = decipherText(req.headers.authorization.split(' ')[1]);
+  var deciphered = scrambler.decipherText(req.headers.authorization.split(' ')[1]);
   var decipheredJson = JSON.parse(deciphered);
-  db.findMember(decipheredJson.memberId, function(err, member) {
+  db.memberModel.findMember(decipheredJson.memberId, function(err, member) {
     if (err) {
       res.json({
         message: "Not able to find member"
@@ -123,7 +133,7 @@ router.get('/valid', function(req, res, next) {
     var authHeader = req.headers.authorization.split(' ')[1];
   res.statusCode = 200;
   if (authHeader && authHeader !== undefined && authHeader !== 'undefined') {
-    var obj = decipherText(authHeader);
+    var obj = JSON.parse(scrambler.decipherText(authHeader));
     if (obj.date) {
       res.json({
         message: 'Active',
@@ -141,50 +151,84 @@ router.get('/valid', function(req, res, next) {
 router.post('/invite', function(req, res, next) {
   var store = req.headers.authorization.split(' ')[1];
   var guest = req.body.guest;
-  var deciphered = decipherText(store);
+  var deciphered = scrambler.decipherText(store);
   var decipheredJson = JSON.parse(deciphered);
   var userId = decipheredJson.memberId;
-
-  var mailOptions = {
-    from: 'nileshgokhale45@gmail.com',
-    to: guest.guestEmail,
-    subject: 'Invitation from a family member ' + decipheredJson.memberName,
-    text: `Hello ${guest.memberName}
-              ${decipheredJson.memberName} from claims you to be his ${guest.memberrelation}. He is inviting you to join him as a family member on Family.
-              You can accept this invitation by clicking on the following link
-    `
-  };
-  sendmail({
-    from: 'nileshgokhale45@gmail.com',
-    to: guest.memberEmail,
-    subject: 'Invitation from a family member ' + decipheredJson.memberName,
-    html: `<p>Hello ${guest.memberName},</p>
-              <p>${decipheredJson.memberName} claims that you are his ${guest.memberrelation}. He is inviting you to join him as a family member on Family.
-              You can accept this invitation by clicking on the following link</p>
-        `
-  }, function(error, reply) {
-    console.log(error && error.stack);
-    console.dir(reply);
-    res.statusCode = 200;
-    res.json({
-      message: `Successfully invited ${guest.guestName} to be part of your family!!!`
+  guest.userId = userId;
+  db.memberModel.findMember(userId, function(err, member) {
+    db.inviteModel.findInvites(userId, function(err, result) {
+      if (result) {
+        var inviteExists = result.filter(doc => {
+          return doc._doc.guestRelation === guest.memberrelation
+        });
+        if (inviteExists.length > 0) {
+          res.statusCode = 500;
+          res.statusMessage = "You have already sent an invite to your wife. You can see that in the invite list in your profile";
+          res.send();
+          return;
+        }
+      }
+      db.inviteModel.save(guest, function(err, data) {
+        if (err) {
+          res.statusCode = 500;
+          res.statusMessage = "Unable to send invite at this time";
+          res.send();
+          return;
+        }
+        if (data) {
+          var url = scrambler.generateUrl(req, {
+            userId: userId,
+            inviteId: data._doc._id,
+            expires: moment().add(10, 'd')
+          });
+          sendmail({
+            from: 'nileshgokhale45@gmail.com',
+            to: guest.memberEmail,
+            subject: `Invitation from a family member ${member.name} ${member.lastName}`,
+            html: `<p>Hello ${guest.memberName},</p>
+                    <p>${member.name} ${member.lastName} claims that you are his ${guest.memberrelation}. He is inviting you to join him as a family member on Family.
+                    You can accept this invitation by clicking on the following link</p>
+                    <a href="${url}">Accept</a>
+              `
+          }, function(error, reply) {
+            console.log(error && error.stack);
+            console.dir(reply);
+            res.statusCode = 200;
+            res.json({
+              message: `Successfully invited ${guest.guestName} to be part of your family!!!`
+            })
+          });
+        } else {
+          res.status = 500;
+          res.statusMessage = "Unable to send invitation at this time.";
+          res.send();
+        }
+      });
     })
-  })
+  });
 });
 
-function decipherText(text) {
-  try {
-    var decipher = crypto.createDecipher('aes192', 'mypassword');
-    return decipher.update(text, 'hex', 'utf8') + decipher.final('utf8');
-  } catch (err) {
-    console.log(err);
-    throw err;
-  }
-}
+router.post('/create', function(req, res, next) {
+  if (req.body) {
+    var data = req.body;
+    var salt = scrambler.createSalt(); //cipherText(data.userName + '');
+    var password = scrambler.hashpassword(data.password, salt); //cipherText(data.password + salt);
+    var user = new db.memberModel({
+      userName: data.userName,
+      password: password,
+      name: data.name,
+      lastName: data.lastName,
+      dateOfBirth: data.dateOfBirth,
+      type: data.type,
+      salt: salt
+    });
 
-function cipherText(text) {
-  var cipher = crypto.createCipher('aes192', 'mypassword');
-  return cipher.update(text, 'utf8', 'hex') + cipher.final('hex');
-}
+    db.save(user, function(err, doc) {
+      if (err)
+        throw err;
+      res.json(doc);
+    });
+  }
+});
 
 module.exports = router;
