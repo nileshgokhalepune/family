@@ -26,6 +26,7 @@ router.get('/register', function(req, res, next) {
       viewModel.email = invite._doc.guestEmail;
       viewModel.userId = decipher.userId;
       viewModel.relation = invite._doc.guestRelation;
+      viewModel.type = db.helper.findType(invite._doc.guestRelation);
       res.render('register', {
         viewModel
       });

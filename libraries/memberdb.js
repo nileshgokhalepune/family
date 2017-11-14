@@ -63,7 +63,7 @@ memberModel.save = function(user, callback) {
 
 memberModel.addFamilyMember = function(user, familyMember, callback) {
   if (user && familyMember) {
-    
+
   }
 }
 
@@ -125,3 +125,65 @@ inviteModel.findInvite = function(inviteId, callback) {
 }
 
 module.exports.inviteModel = inviteModel;
+
+var relationLookupSchema = new mongoose.Schema({
+  from: String,
+  to: String
+});
+
+var relationLookupModel = mongoose.model('relationmap', relationLookupSchema, 'relationmap');
+
+relationLookupModel.lookup = function(relation, callback) {
+  relationLookupModel.find({
+    from: relation
+  }, {
+    to: 1,
+    from: -1
+  }, (err, res) => {
+    if (err) {
+      console.log("Relation not found");
+      callback('Not found', null);
+    }
+    if (!res || res.length <= 0) {
+      relationLookupModel.find({
+        to: relation
+      }, {
+        from: 1,
+        to: -1
+      }, (err1, res1) => {
+        if (err1) {
+          callback('Not found', null);
+          return;
+        }
+        if (!res1 || res1.length <= 0) {
+          callback('Not found', null);
+          return;
+        } else {
+          callback(null, res1[0].from);
+          return;
+        }
+      });
+    } else {
+      callback(null, res[0].to);
+    }
+  });
+}
+
+module.exports.relationLookup = relationLookupModel;
+
+var helper = {};
+helper.peers = ["Wife", "Husband", "Brother", "Sister", "Friend"];
+helper.children = ["Son", "Daughter", "StepSon", "StepDaughter"];
+helper.parents = ["Father", "Mother"];
+
+helper.findType = function(relation) {
+  if (this.peers.find((p) => p === relation)) {
+    return "peer";
+  } else if (this.children.find((p) => p === relation)) {
+    return "child";
+  } else if (this.parents.find((p) => p === relation)) {
+    return "parent";
+  }
+}
+
+module.exports.helper = helper;

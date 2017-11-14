@@ -49,7 +49,7 @@ export class Board extends Component {
       return (
         <div className="family-container">
         <div className="you">
-            {this.renderMember(this.state)}
+            {this.renderMember(this.state.user)}
         </div>
         <div className="family">
             <div className="parents">

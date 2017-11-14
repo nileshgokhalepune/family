@@ -219,8 +219,9 @@ router.post('/create', function(req, res, next) {
       name: data.name,
       lastName: data.lastName,
       dateOfBirth: data.dateOfBirth,
-      type: data.type,
-      salt: salt
+      type: 'self',
+      salt: salt,
+      gender: db.helper.findGender(relation)
     });
 
     db.memberModel.save(user, function(err, doc) {
@@ -249,11 +250,37 @@ router.post('/relate', function(req, res, next) {
           res.send();
           return;
         } else {
-          other.relate = relation;
-          member.family.push(other);
-          member.save();
-          member.relate = getCounterRelation(relation);
-          other.family.push(member);
+          db.relationLookup.lookup(relation, function(err, found) {
+            if (err) {
+              res.statusCode = 404;
+              res.statusMessage = "Relation not found";
+              res.send();
+              return;
+            }
+            var relativeExists = member.family.find((record) => record.userId === other._id);
+            if (!relativeExists) {
+              var relative = {
+                userId: newUserId,
+                relation: relation,
+                name: other._doc.name,
+                type: db.helper.findType(relation)
+              };
+              member.family.push(relative);
+              member.save();
+            }
+            relativeExists = other.family.find((record) => record.userId === member._id);
+            if (!relativeExists) {
+              relative = {
+                userId: member._id,
+                relation: found,
+                name: member._doc.name,
+                type: db.helper.findType(found)
+              }
+              other.family.push(relative);
+              other.save();
+            }
+          });
+
         }
       })
     }

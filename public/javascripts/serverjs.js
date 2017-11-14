@@ -50,13 +50,13 @@ var registerUser = function(event) {
           var relation = $("#relation").val();
         }
         $.ajax({
-          url: '/relate',
+          url: '/users/relate',
           method: 'POST',
-          data: JSON.stringify({
+          data: {
             userId: userId,
             newUserId: newUserId,
             relation: relation
-          }),
+          },
           success: function(res) {},
           error: function(err) {}
         })

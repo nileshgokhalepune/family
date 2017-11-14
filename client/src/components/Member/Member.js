@@ -15,11 +15,11 @@ export class Member extends Component {
 
   render() {
     let display = '';
-    let type = this.props.value.user.type;
+    let type = this.props.value.type;
     if (type === 'self') {
       display = 'You'
     } else {
-      display = 'Your '; // + this.props.value.relation;
+      display = 'Your ' + this.props.value.relation;
     }
     let showPeeks = type === 'self' ? null : (
       <div className="peeks">
