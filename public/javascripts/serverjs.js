@@ -59,7 +59,7 @@ var registerUser = function(event) {
             relation: relation
           },
           success: function(res) {
-            document.location = "http://localhost:3000";
+            document.location = "/";
           },
           error: function(err) {}
         })
