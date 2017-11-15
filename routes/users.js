@@ -77,6 +77,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/hash', function(req, res, next) {
+  console.log(`Request IP ${req.ip}`);
   var cipherText = scrambler.cipherText(req.ip);
   console.log(cipherText);
   res.json(cipherText);
