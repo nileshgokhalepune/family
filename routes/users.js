@@ -77,11 +77,14 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/hash', function(req, res, next) {
-  res.json(scrambler.cipherText(req.ip));
+  var cipherText = scrambler.cipherText(req.ip);
+  console.log(cipherText);
+  res.json(cipherText);
 });
 
 router.post('/ticket', function(req, res) {
   var encrypted = scrambler.cipherText(req.ip);
+  console.log(encrypted);
   db.memberModel.auth(req.body.userName, req.body.password, function(err, member) {
     if (err) {
       res.statusCode = 404;
@@ -89,6 +92,7 @@ router.post('/ticket', function(req, res) {
       res.send();
     } else {
       var hashed = scrambler.hashpassword(req.body.password, member.salt);
+      console.log(`Member Found - ${hashed}`);
       if (hashed === member.password) {
         var cipherJson = {
           memberId: member._doc._id,
@@ -98,6 +102,7 @@ router.post('/ticket', function(req, res) {
           memberEmail: member._doc.email
         };
         var ticket = scrambler.cipherText(JSON.stringify(cipherJson));
+        console.log(`Ticket created ${ticket}`);
         res.json({
           encrypted: ticket,
           user: member
@@ -278,7 +283,7 @@ router.post('/relate', function(req, res, next) {
               other.family.push(relative);
               other.save();
               member.save();
-              res.statusCode =200;
+              res.statusCode = 200;
               res.statusMessage = "Relation added";
               res.send();
             }
