@@ -36,6 +36,7 @@ var submituserform = function() {
 
 var registerUser = function(event) {
   event.preventDefault();
+  $("#registerBtn").attr("disabled", "disabled");
   if ($('form').valid()) {
     var str = $('form').serialize();
     $.ajax({
@@ -57,7 +58,9 @@ var registerUser = function(event) {
             newUserId: newUserId,
             relation: relation
           },
-          success: function(res) {},
+          success: function(res) {
+            document.location = "http://localhost:3000";
+          },
           error: function(err) {}
         })
         debugger;
@@ -66,5 +69,7 @@ var registerUser = function(event) {
         debugger;
       }
     });
+  }else{
+    $("#registerBtn").removeAttr("disabled");
   }
 }

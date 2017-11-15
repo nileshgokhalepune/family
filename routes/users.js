@@ -218,10 +218,10 @@ router.post('/create', function(req, res, next) {
       password: password,
       name: data.name,
       lastName: data.lastName,
-      dateOfBirth: data.dateOfBirth,
+      dateOfBirth: data.dateofBirth,
       type: 'self',
       salt: salt,
-      gender: db.helper.findGender(relation)
+      gender: db.helper.findGender(data.relation)
     });
 
     db.memberModel.save(user, function(err, doc) {
@@ -257,7 +257,7 @@ router.post('/relate', function(req, res, next) {
               res.send();
               return;
             }
-            var relativeExists = member.family.find((record) => record.userId === other._id);
+            var relativeExists = member.family.find((record) => record.userId === other._id.toString());
             if (!relativeExists) {
               var relative = {
                 userId: newUserId,
@@ -266,9 +266,8 @@ router.post('/relate', function(req, res, next) {
                 type: db.helper.findType(relation)
               };
               member.family.push(relative);
-              member.save();
             }
-            relativeExists = other.family.find((record) => record.userId === member._id);
+            relativeExists = other.family.find((record) => record.userId === member._id.toString());
             if (!relativeExists) {
               relative = {
                 userId: member._id,
@@ -278,11 +277,14 @@ router.post('/relate', function(req, res, next) {
               }
               other.family.push(relative);
               other.save();
+              member.save();
+              res.statusCode =200;
+              res.statusMessage = "Relation added";
+              res.send();
             }
           });
-
         }
-      })
+      });
     }
   });
 });

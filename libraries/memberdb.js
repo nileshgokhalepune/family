@@ -13,7 +13,8 @@ var memberSchema = new mongoose.Schema({
   salt: String,
   locations: Array,
   family: Array,
-  type: String
+  type: String,
+  gender:String
 });
 
 var memberModel = mongoose.model('member', memberSchema, 'member');
@@ -22,8 +23,8 @@ memberModel.auth = function(username, password, callback) {
   var user = memberModel.findOne({
     userName: username
   }, {
-    password: 1,
-    salt: 1
+    password: -1,
+    salt: -1
   }, function(err, member) {
     if (err) {
       callback(err, null);
@@ -124,6 +125,12 @@ inviteModel.findInvite = function(inviteId, callback) {
   });
 }
 
+inviteModel.deactivateInvite = function(inviteId, callback) {
+  inviteModel.find({
+    _id: inviteId
+  }, fu)
+}
+
 module.exports.inviteModel = inviteModel;
 
 var relationLookupSchema = new mongoose.Schema({
@@ -184,6 +191,16 @@ helper.findType = function(relation) {
   } else if (this.parents.find((p) => p === relation)) {
     return "parent";
   }
+}
+
+helper.findGender = function(relation) {
+  var male = ["Husband", "Brother", "Nephew", "Father", "Son"];
+  var female = ["Wife", "Sister", "Neice", "Mother", "Daughter"];
+  if (male.find((g) => g === relation))
+    return "Male";
+  if (female.find((g) => g === relation))
+    return "Female";
+  return "Unspecified";
 }
 
 module.exports.helper = helper;

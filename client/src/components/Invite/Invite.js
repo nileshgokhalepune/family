@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import { Security } from '../../service/Security';
+import { Loading } from '../Loading';
+
 class Invite extends Component {
   parms= {};
   navigateToBoard(event) {
     event.preventDefault();
+    this.setState({
+      loading: true
+    });
     Security.invite(this.parms, Security.get()).then(data => {
       if (data && data.message) console.log(`Message:${data.message}`);
       this.props.history.push('/');
@@ -18,12 +23,17 @@ class Invite extends Component {
   }
 
   render() {
-    return (
+    var showLoading = null;
+    if (this.state && this.state.loading)
+      showLoading = <Loading />
+
+      return (
+        <div>
       <form onChange={(event) => this.onFieldChange(event)}>
             <div style={{
-        textAlign: 'left',
-        margin: '10px'
-      }}>
+          textAlign: 'left',
+          margin: '10px'
+        }}>
                 <div className="form-group">
                     <label htmlFor="memberName"> Name:
                         <input className="form-control" type="text" name="memberName" id="memberName" />
@@ -53,7 +63,9 @@ class Invite extends Component {
                 </div>
             </div>
         </form>
-      );
+        {showLoading}
+        </div>
+        );
   }
 }
 
