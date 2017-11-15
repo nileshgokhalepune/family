@@ -1,5 +1,11 @@
 import React from 'react';
 import logo from '../logo.svg';
+import {Security} from '../service/Security';
+
+function logout(props){
+    Security.logout();
+    props.history.push('/');
+}
 
 const Header = (props) => (
   <header className="App-header">
@@ -11,7 +17,7 @@ const Header = (props) => (
                     <a className="nav-link" href="#"  onClick={() => props.history.push('/')}>Home <span className="sr-only">(current)</span></a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href="#"   onClick={() => props.history.push('/')}>Logout</a>
+                    <a className="nav-link" href="#"   onClick={() => logout(props) }>Logout</a>
                 </li>
             </ul>
         </div>

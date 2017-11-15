@@ -16,8 +16,6 @@ class App extends Component {
   }
 
   handleLogin(event) {
-    fetch('/message').then(res => res.json)
-      .then(data => alert(data.message));
     Security.getHash().then(data => {
       this.setState({
         loggedIn: true,

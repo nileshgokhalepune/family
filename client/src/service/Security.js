@@ -94,6 +94,8 @@ export const Security = {
   },
   parseJson(response) {
     return response.json();
+  },
+  logout() {
+    localStorage.removeItem(this.hash);
   }
-
 }
