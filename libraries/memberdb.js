@@ -14,7 +14,7 @@ var memberSchema = new mongoose.Schema({
   locations: Array,
   family: Array,
   type: String,
-  gender:String
+  gender: String
 });
 
 var memberModel = mongoose.model('member', memberSchema, 'member');
@@ -201,6 +201,19 @@ helper.findGender = function(relation) {
   if (female.find((g) => g === relation))
     return "Female";
   return "Unspecified";
+}
+
+helper.getClientIP = function(request) {
+  var ipAddr;
+  var iplist = request.headers["x-forwarded-for"];
+  if (iplist) {
+    var list = iplist.split(",");
+    ipAddr = list[list.length - 1];
+  } else {
+    ipAddr = request.connection.remoteAddress;
+  }
+
+  return ipAddr;
 }
 
 module.exports.helper = helper;

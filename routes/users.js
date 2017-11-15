@@ -77,14 +77,16 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/hash', function(req, res, next) {
-  console.log(`Request IP ${req.ip}`);
-  var cipherText = scrambler.cipherText(req.ip);
+  var ipAddress = db.helper.getClientIP(req);
+  console.log(`Request IP ${ipAddress}`);
+  var cipherText = scrambler.cipherText(ipAddress);
   console.log(cipherText);
   res.json(cipherText);
 });
 
 router.post('/ticket', function(req, res) {
-  var encrypted = scrambler.cipherText(req.ip);
+  var ipAddress = db.helper.getClientIP(req);
+  var encrypted = scrambler.cipherText(ipAddress);
   console.log(encrypted);
   db.memberModel.auth(req.body.userName, req.body.password, function(err, member) {
     if (err) {
@@ -99,7 +101,7 @@ router.post('/ticket', function(req, res) {
           memberId: member._doc._id,
           memberName: member._doc.username,
           date: Date.now(),
-          ip: req.ip,
+          ip: ipAddress,
           memberEmail: member._doc.email
         };
         var ticket = scrambler.cipherText(JSON.stringify(cipherJson));
@@ -296,7 +298,6 @@ router.post('/relate', function(req, res, next) {
 });
 
 module.exports = router;
-
 
 function getCounterRelation(relation, targetGender) {
   return;
