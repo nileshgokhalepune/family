@@ -36,6 +36,7 @@ Scrambler.generateUrl = function(req, obj) {
   var ciphered = this.cipherText(JSON.stringify(obj));
   var proto = req.protocol;
   var host = req.get('host');
+  console.log(proto + "://" + host + "/register?r=" + ciphered);
   return proto + "://" + host + "/register?r=" + ciphered;
 }
 
