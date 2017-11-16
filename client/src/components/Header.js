@@ -4,7 +4,7 @@ import {Security} from '../service/Security';
 
 function logout(props){
     Security.logout();
-    props.history.push('/');
+    window.location.reload();
 }
 
 const Header = (props) => (
