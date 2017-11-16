@@ -8,6 +8,7 @@ import { Status } from '../../service/Enums';
 import { Loading } from '../Loading';
 import Login from '../Login/Login';
 import '../../../node_modules/font-awesome/css/font-awesome.css';
+import logo from '../../logo.svg';
 
 class App extends Component {
   constructor(props) {
@@ -27,6 +28,12 @@ class App extends Component {
     store: '',
     status: Status.Loading
   }
+
+  logout(props) {
+    Security.logout();
+    window.location.reload();
+  }
+
 
   componentWillMount() {
     Security.getHash().then(value => {
@@ -71,8 +78,8 @@ class App extends Component {
     }
 
     return (
-      <div className="App">
-      <Header {...this.props} /> 
+      <div className="container-fluid"> 
+        <Header {...this.props} /> 
        {loader}
        {component} 
     </div>

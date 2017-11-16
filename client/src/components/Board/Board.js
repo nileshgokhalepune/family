@@ -6,7 +6,7 @@ export class Board extends Component {
     user: null
   };
   componentWillMount() {
-    Security.validate().then(data => { 
+    Security.validate().then(data => {
       if (data.valid) {
         Security.getData().then(data => {
           this.setState({
@@ -47,29 +47,12 @@ export class Board extends Component {
         return f.type === this.parents ? <Member value={f} key={i} callbackPosts={(id) => alert('called' + id) }/> : '';
       });
       return (
-        <div className="family-container">
+      <div className="App">
         <div className="you">
             {this.renderMember(this.state.user)}
-        </div>
-        <div className="family">
-            <div className="parents">
-                <div className="family-header">
-                    Your Elders
-                </div>
-                {parents}
-            </div>
-            <div className="peers">
-                <div className="family-header">
-                    Your Peers
-                </div>
-                {peers}
-            </div> 
-            <div className="children">
-                <div className="family-header">
-                    Your dependants
-                </div>
-                {subordinates}
-            </div>
+            {parents}
+            {peers}
+            {subordinates}
         </div>
         <div className="posts">
             Here we show all the posts
