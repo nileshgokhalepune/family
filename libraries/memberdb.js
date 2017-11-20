@@ -14,7 +14,8 @@ var memberSchema = new mongoose.Schema({
   locations: Array,
   family: Array,
   type: String,
-  gender: String
+  gender: String,
+  imageSource: String
 });
 
 var memberModel = mongoose.model('member', memberSchema, 'member');

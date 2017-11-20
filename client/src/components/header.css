@@ -1,0 +1,26 @@
+.bluebar{
+    background-color: #0259a0;
+    width:100%;
+    height: 70px;
+}
+
+.header-logo{
+    width:100px;
+    height:50px;
+    display:inline-block;
+}
+@media screen and (max-width:500px){
+    .bluebar{
+        height: 40px;
+    }
+
+    .header-logo{
+        width:25px;
+        height:25px;
+        display:inline-block;
+    }
+}
+
+.user{
+    display: inline-block;
+}

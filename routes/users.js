@@ -6,6 +6,7 @@ var smtpTransport = require('nodemailer-smtp-transport');
 var config = require('../libraries/config');
 var scrambler = require('../libraries/mycrypto');
 var moment = require('moment');
+var path = require('path');
 
 var sendmail = require('sendmail')({
   silent: true
@@ -135,26 +136,6 @@ router.get('/data', function(req, res, next) {
     }
   });
 })
-
-router.get('/valid', function(req, res, next) {
-  if (req.headers.authorization)
-    var authHeader = req.headers.authorization.split(' ')[1];
-  res.statusCode = 200;
-  if (authHeader && authHeader !== undefined && authHeader !== 'undefined') {
-    var obj = JSON.parse(scrambler.decipherText(authHeader));
-    if (obj.date) {
-      res.json({
-        message: 'Active',
-        valid: true
-      });
-      return;
-    }
-  }
-  res.json({
-    message: 'Inactive',
-    valid: false
-  });
-});
 
 router.post('/invite', function(req, res, next) {
   var store = req.headers.authorization.split(' ')[1];
@@ -295,6 +276,49 @@ router.post('/relate', function(req, res, next) {
       });
     }
   });
+});
+
+router.get('/valid', function(req, res, next) {
+  if (req.headers.authorization)
+    var authHeader = req.headers.authorization.split(' ')[1];
+  res.statusCode = 200;
+  if (authHeader && authHeader !== undefined && authHeader !== 'undefined') {
+    var obj = JSON.parse(scrambler.decipherText(authHeader));
+    if (obj.date) {
+      res.json({
+        message: 'Active',
+        valid: true
+      });
+      return;
+    }
+  }
+  res.json({
+    message: 'Inactive',
+    valid: false
+  });
+});
+
+router.get('/avatar', function(req, res, next) {
+  if (req.headers.authorization) {
+    var authHeader = req.headers.authorization.split(' ')[1];
+    res.statusCode = 200;
+    if (authHeader && authHeader !== undefined && authHeader !== 'undefined') {
+      var obj = JSON.parse(scrambler.decipherText(authHeader));
+      if (obj) {
+        var id = obj.memberId
+        db.memberModel.find({
+          _id: id
+        }, {
+          imgSource: 1
+        }, function(err, data) {
+          if (err || !data || data.length === 0 || !data[0].imageSource) {
+            res.sendFile( path.join('../','public/images/missing.gif'));
+          } else {
+          }
+        });
+      }
+    }
+  }
 });
 
 module.exports = router;

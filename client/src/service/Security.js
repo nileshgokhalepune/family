@@ -97,5 +97,14 @@ export const Security = {
   },
   logout() {
     localStorage.removeItem(this.hash);
+  },
+  avatar() {
+    return new Promise((resolve, reject) => {
+      fetch('/users/avatar', {
+        headers: this.getHeaders()
+      }).then(res => res.json())
+        .then(data => resolve(data))
+        .catch(err => reject(err))
+    })
   }
 }

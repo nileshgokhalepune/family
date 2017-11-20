@@ -78,10 +78,12 @@ class App extends Component {
     }
 
     return (
-      <div className="container-fluid"> 
+      <div>
         <Header {...this.props} /> 
-       {loader}
-       {component} 
+        <div className=""> 
+        {loader}
+        {component} 
+        </div>
     </div>
       );
 

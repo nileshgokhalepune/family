@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3">
+    <g fill="#61DAFB">
+ 
+ <!-- <g> 
+  <path stroke="#000" id="svg_1" d="m252.5,62.61835l21.96688,-19.33085l31.06624,0l21.96688,19.33085l0,27.33829l-21.96688,19.33085l-31.06624,0l-21.96688,-19.33085l0,-27.33829z" stroke-width="1.5" fill="#535F75"/>
+  <text stroke="#000" transform="matrix(2.549869888603638,0,0,2.4594657583289363,-420.1856664265738,-87.41988933421354) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_2" y="75.5" x="272.5" stroke-width="0" fill="#FFE7A2">F</text>
+ </g> -->
+  <!--<path id="lineAB" d="M 100 450 l 0 -400" stroke="green" stroke-width="50" fill="blue" /> 
+   <path d="M 100 50 l 250 0" stroke="green" stroke-width="50" fill="none" />
+  <path d="M 100 275 l 150 0" stroke="green" stroke-width="50" fill="none" /> -->
+  <path id="lineAB" d="M 100 350 l 0 -300" stroke="green" stroke-width="20" fill="none" /> 
+  <path d="M 100 50 l 150 0" stroke="green" stroke-width="20" fill="none" />
+  <path d="M 100 175 l 100 0" stroke="green" stroke-width="20" fill="none" />
+
+  <path d="M 100 350 l 50 -100" stroke="green" stroke-width="20" fill="none" />
+  <path d="M 200 350 l -50 -100" stroke="green" stroke-width="20" fill="none" />  
+  <path d="M 125 300 l 50 0" stroke="green" stroke-width="20" fill="none" />
+  
+  <path d="M 210 350 l 50 -100" stroke="green" stroke-width="20" fill="none" />
+  <path d="M 310 350 l -50 -100" stroke="green" stroke-width="20" fill="none" />  
+  <path d="M 310 350 l 50 -100" stroke="green" stroke-width="20" fill="none" />
+  <path d="M 410 350 l -50 -100" stroke="green" stroke-width="20" fill="none" />  
+  
+  <path d="M 420 250 l 100 0" stroke="green" stroke-width="20" fill="none" /> 
+  <path d="M 470 350 l 0 -100" stroke="green" stroke-width="20" fill="none" />
+  <path d="M 420 350 l 100 0" stroke="green" stroke-width="20" fill="none" /> 
+  
+  
+  <path d="M 540 350 l 100 0" stroke="green" stroke-width="20" fill="none" /> 
+  <path d="M 540 350 l 0 -100" stroke="green" stroke-width="20" fill="none" />
+
+  
+  <path d="M 660 300 l -50 -70" stroke="green" stroke-width="20" fill="none" />
+  <path d="M 660 300 l 50 -70" stroke="green" stroke-width="20" fill="none" /> 
+  <path d="M 660 350 l 0 -50" stroke="green" stroke-width="20" fill="none" />
+  Sorry, your browser does not support inline SVG.
+
+    </g>
+</svg>

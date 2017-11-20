@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Security } from '../../service/Security';
+import './Login.css';
+
 class Login extends Component {
   parms={
   };
@@ -24,14 +26,16 @@ class Login extends Component {
   render() {
     return (
       <form onChange={(event) => this.onFieldChange(event)}>
-        <div className="form-group">
+        <div className="container form-group">
             <label>User name:
                 <input className="form-control" name="userName"  type="text" id="userName"/>
             </label>
             <label>Password:
                 <input className="form-control" name="password" type="password" id="password"/>
             </label>
-            <button className="btn btn-primary" onClick={(event) => this.login(event)}>Login</button> 
+            <div>
+              <button className="btn btn-primary" onClick={(event) => this.login(event)}>Login</button> 
+            </div>
         </div>
       </form>
     )

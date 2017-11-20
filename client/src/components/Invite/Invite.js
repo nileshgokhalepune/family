@@ -4,6 +4,10 @@ import { Loading } from '../Loading';
 
 class Invite extends Component {
   parms= {};
+
+  navigateAway() {
+    this.props.history.push('/');
+  }
   navigateToBoard(event) {
     event.preventDefault();
     this.setState({
@@ -11,10 +15,10 @@ class Invite extends Component {
     });
     Security.invite(this.parms, Security.get()).then(data => {
       if (data && data.message) console.log(`Message:${data.message}`);
-      this.props.history.push('/');
+      this.navigateAway()
     }).catch(err => {
       alert(err);
-      this.props.history.push('/');
+      this.navigateAway()
     });
   }
 
@@ -27,13 +31,13 @@ class Invite extends Component {
     if (this.state && this.state.loading)
       showLoading = <Loading />
 
-      return (
-        <div>
+    return (
+      <div>
       <form onChange={(event) => this.onFieldChange(event)}>
             <div style={{
-          textAlign: 'left',
-          margin: '10px'
-        }}>
+        textAlign: 'left',
+        margin: '10px'
+      }}>
                 <div className="form-group">
                     <label htmlFor="memberName"> Name:
                         <input className="form-control" type="text" name="memberName" id="memberName" />
@@ -60,12 +64,13 @@ class Invite extends Component {
                 </label>
                 <div>
                     <button className="btn btn-primary" onClick={this.navigateToBoard.bind(this)}>Send Invite</button>
+                    <button className="btn btn-default" onClick={this.navigateAway.bind(this)}>Cancel</button>
                 </div>
             </div>
         </form>
         {showLoading}
         </div>
-        );
+      );
   }
 }
 

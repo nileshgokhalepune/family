@@ -54,9 +54,6 @@ export class Board extends Component {
             {peers}
             {subordinates}
         </div>
-        <div className="posts">
-            Here we show all the posts
-        </div>
       </div>
       )
 
