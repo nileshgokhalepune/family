@@ -66,6 +66,7 @@ class App extends Component {
   render() {
     var loader;
     var component;
+    var store;
     if (this.state && this.state.status === Status.Loading) {
       loader = <Loading />
       component = null;
@@ -73,13 +74,14 @@ class App extends Component {
       loader = null;
       component = <Login handler={this.loggedin}/>
     } else if (this.state.status === Status.Loaded && this.state.loggedIn) {
+      store = this.state.store;
       loader = null;
       component = <Main />
     }
 
     return (
       <div>
-        <Header {...this.props} /> 
+        <Header {...this.props} storedata={store} /> 
         <div className=""> 
         {loader}
         {component} 

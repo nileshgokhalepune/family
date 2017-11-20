@@ -10,19 +10,30 @@ function logout(props) {
 }
 
 function avatar() {
-  Security.avatar().then(res => {return(
-    <img src="{res}" />
-  )});
+  Security.avatar().then(res => {
+    return (
+      <img src="{res.src}" />
+    )
+  });
 }
-const Header = (props) => (
+
+var avatar = (store) => {
+  var temp = null;
+  if (store) {
+    temp = <img className="user" src={"/users/avatar/" + store}/>
+  }
+  return (
+    temp
+    );
+}
+
+const Header = (props, store) => (
   <header className="App-header">
     <div className="bluebar">
       <div className="header-logo">
         <img src={mylogo} alt="logo" />
-        <div className="user">
-        {
-          avatar()
-        }
+        <div className="userDiv">
+          {avatar(props.storedata)}
         </div>
       </div>
     </div>

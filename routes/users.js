@@ -298,9 +298,9 @@ router.get('/valid', function(req, res, next) {
   });
 });
 
-router.get('/avatar', function(req, res, next) {
-  if (req.headers.authorization) {
-    var authHeader = req.headers.authorization.split(' ')[1];
+router.get('/avatar/:payload', function(req, res, next) {
+  if (req.params.payload) {
+    var authHeader = req.params.payload;
     res.statusCode = 200;
     if (authHeader && authHeader !== undefined && authHeader !== 'undefined') {
       var obj = JSON.parse(scrambler.decipherText(authHeader));
@@ -312,7 +312,7 @@ router.get('/avatar', function(req, res, next) {
           imgSource: 1
         }, function(err, data) {
           if (err || !data || data.length === 0 || !data[0].imageSource) {
-            res.sendFile( path.join('../','public/images/missing.gif'));
+            res.sendFile(path.join(__dirname, '../', 'public/images/missing.gif'));
           } else {
           }
         });

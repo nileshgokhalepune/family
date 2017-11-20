@@ -1,6 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3">
     <g fill="#61DAFB">
- 
+     <path stroke="#000" id="svg_1" d="m36.5,121.63659l149.0819,-113.34909l210.83622,0l149.0819,113.34909l0,160.30181l-149.0819,113.34909l-210.83622,0l-149.0819,-113.34909l0,-160.30181z" stroke-width="1.5" fill="#535F75"/>
+  <text stroke="#000" transform="matrix(6.326834218865434,0,0,6.4201632248797065,-581.9423791570857,-643.6299114253437) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_2" y="137.27362" x="102.75701" stroke-width="0" fill="#FFE7A2">Family</text>
+
  <!-- <g> 
   <path stroke="#000" id="svg_1" d="m252.5,62.61835l21.96688,-19.33085l31.06624,0l21.96688,19.33085l0,27.33829l-21.96688,19.33085l-31.06624,0l-21.96688,-19.33085l0,-27.33829z" stroke-width="1.5" fill="#535F75"/>
   <text stroke="#000" transform="matrix(2.549869888603638,0,0,2.4594657583289363,-420.1856664265738,-87.41988933421354) " xml:space="preserve" text-anchor="start" font-family="Helvetica, Arial, sans-serif" font-size="24" id="svg_2" y="75.5" x="272.5" stroke-width="0" fill="#FFE7A2">F</text>
@@ -8,7 +10,7 @@
   <!--<path id="lineAB" d="M 100 450 l 0 -400" stroke="green" stroke-width="50" fill="blue" /> 
    <path d="M 100 50 l 250 0" stroke="green" stroke-width="50" fill="none" />
   <path d="M 100 275 l 150 0" stroke="green" stroke-width="50" fill="none" /> -->
-  <path id="lineAB" d="M 100 350 l 0 -300" stroke="green" stroke-width="20" fill="none" /> 
+  <!-- <path id="lineAB" d="M 100 350 l 0 -300" stroke="green" stroke-width="20" fill="none" /> 
   <path d="M 100 50 l 150 0" stroke="green" stroke-width="20" fill="none" />
   <path d="M 100 175 l 100 0" stroke="green" stroke-width="20" fill="none" />
 
@@ -32,7 +34,7 @@
   
   <path d="M 660 300 l -50 -70" stroke="green" stroke-width="20" fill="none" />
   <path d="M 660 300 l 50 -70" stroke="green" stroke-width="20" fill="none" /> 
-  <path d="M 660 350 l 0 -50" stroke="green" stroke-width="20" fill="none" />
+  <path d="M 660 350 l 0 -50" stroke="green" stroke-width="20" fill="none" /> -->
   Sorry, your browser does not support inline SVG.
 
     </g>

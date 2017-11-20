@@ -2,6 +2,12 @@
     background-color: #0259a0;
     width:100%;
     height: 70px;
+    display: inline-flex;
+}
+
+.bluebar > div{
+    flex-flow:row;
+    display: inline;
 }
 
 .header-logo{
@@ -21,6 +27,6 @@
     }
 }
 
-.user{
-    display: inline-block;
+.userDiv{
+    display: inline;
 }
