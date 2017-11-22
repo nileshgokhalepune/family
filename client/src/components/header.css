@@ -8,6 +8,7 @@
 .bluebar > div{
     flex-flow:row;
     display: inline;
+    margin: 10px;
 }
 
 .header-logo{
@@ -15,18 +16,42 @@
     height:50px;
     display:inline-block;
 }
+
+
+.userDiv{
+    display: inline;
+    position: absolute;
+    left: 25%;
+}
+
+.userDiv >div> img{
+    width:40px!important;
+    height: 40px!important;
+}
+
+
+.logout{
+    right: 10px;
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
+    position: absolute;
+}
 @media screen and (max-width:500px){
     .bluebar{
         height: 40px;
     }
 
     .header-logo{
-        width:25px;
-        height:25px;
+        width:35px;
+        height:35px;
+        top:50%;
         display:inline-block;
     }
-}
+    
+    .userDiv > div> img{
+        width:25px!important;
+        height: 25px!important;
+    }
 
-.userDiv{
-    display: inline;
 }

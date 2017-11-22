@@ -107,9 +107,14 @@ router.post('/ticket', function(req, res) {
         };
         var ticket = scrambler.cipherText(JSON.stringify(cipherJson));
         console.log(`Ticket created ${ticket}`);
+        delete member.password;
+        delete member.salt;
         res.json({
           encrypted: ticket,
-          user: member
+          user: {
+            name: member.name,
+            lastLoggedIn: moment()
+          }
         });
       } else {
         res.status = 401;
@@ -131,7 +136,8 @@ router.get('/data', function(req, res, next) {
     }
     if (member) {
       res.json({
-        member: member._doc
+        member: member._doc,
+        name: member._doc.name
       });
     }
   });

@@ -24,8 +24,9 @@ memberModel.auth = function(username, password, callback) {
   var user = memberModel.findOne({
     userName: username
   }, {
-    password: -1,
-    salt: -1
+    password: 1,
+    salt: 1,
+    name: 1
   }, function(err, member) {
     if (err) {
       callback(err, null);

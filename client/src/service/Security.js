@@ -1,3 +1,5 @@
+import { locale } from "moment";
+
 export const Security = {
   hash: '',
   ticket: '',
@@ -10,8 +12,12 @@ export const Security = {
     }
     return header;
   },
-  get() {
-    return localStorage.getItem(this.hash);
+  get(key) {
+    if (!key)
+      key = this.hash;
+    var value = localStorage.getItem(key);
+    if (!key) return value;
+    return JSON.parse(value);
   },
   set(key, value) {
     localStorage.setItem(key, value);
@@ -96,7 +102,8 @@ export const Security = {
     return response.json();
   },
   logout() {
-    localStorage.removeItem(this.hash);
+    localStorage.clear();
+    //localStorage.removeItem(this.hash);
   },
   avatar() {
     return new Promise((resolve, reject) => {
@@ -106,5 +113,8 @@ export const Security = {
         .then(data => resolve(data))
         .catch(err => reject(err))
     })
+  },
+  setData(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
   }
 }

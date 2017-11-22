@@ -38,24 +38,8 @@ body {
   margin: 10px;
   padding: 10px;
 }
-[type="member"]{
-  width: 100px;
-  height: 100px;
-  margin: 10 10 10 10;
-  padding: 10px;
-  border: 1px solid rgba(122, 77, 226, 0.74);
-  border-radius: 20%;
-  font-size: 12px;
-}
 
 
-[type="member"]:hover{
-  border: 3px solid rgba(89, 26, 236, 0.74);
-}
-
-.you{
-  display: table-cell;
-}
 
 .family{
   left:30vw;
@@ -82,10 +66,6 @@ body {
   color:white;
 }
 
-.peeks{
-  margin: 3px;
-  padding: 3px;
-}
 
 i{
   margin: 2px;
@@ -99,6 +79,3 @@ i:hover{
   display: table-cell;
 }
 
-.member:hover{
-  cursor: pointer;
-} 

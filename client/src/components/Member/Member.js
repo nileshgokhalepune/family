@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
+import './Member.css';
 
 export class Member extends Component {
   showPosts(event) {
@@ -9,7 +10,7 @@ export class Member extends Component {
 
   showLikes(event) {}
 
-  navigateToInvite() { 
+  navigateToInvite() {
     this.props.history.push('/invite');
   }
 

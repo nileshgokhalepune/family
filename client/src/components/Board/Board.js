@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Member } from '../Member/Member';
 import { Security } from '../../service/Security';
+import './Board.css';
+
 export class Board extends Component {
   state = {
     user: null
@@ -47,7 +49,7 @@ export class Board extends Component {
         return f.type === this.parents ? <Member value={f} key={i} callbackPosts={(id) => alert('called' + id) }/> : '';
       });
       return (
-      <div className="App">
+        <div className="App">
         <div className="you">
             {this.renderMember(this.state.user)}
             {parents}
