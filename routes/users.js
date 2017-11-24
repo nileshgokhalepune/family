@@ -144,6 +144,7 @@ router.get('/data', function(req, res, next) {
 })
 
 router.post('/invite', function(req, res, next) {
+  req.secure
   var store = req.headers.authorization.split(' ')[1];
   var guest = req.body.guest;
   if (!guest.memberrelation || !guest.memberName || !guest.memberEmail) {
