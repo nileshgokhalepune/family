@@ -73,7 +73,7 @@ class App extends Component {
     if (this.state && this.state.status === Status.Loading) {
       loader = <Loading />
       component = null;
-    } else if (!this.state.store && this.state.status === Status.Loaded) {
+    } else if (!this.state.store && this.state.status === Status.Loaded && this.props.location.pathname.indexOf('register') === -1) {
       loader = null;
       component = <Login handler={this.loggedin}/>
     } else if (this.state.status === Status.Loaded && this.state.loggedIn) {
