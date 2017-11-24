@@ -1,11 +1,12 @@
 [type="member"]{
     width: 100px;
     height: 100px;
-    margin: 10 10 10 10;
+    margin: 10px;
     padding: 10px;
     border: 1px solid rgba(122, 77, 226, 0.74);
     border-radius: 20%;
     font-size: 12px;
+    position: relative;
   }
   
   [type="member"]:hover{
@@ -16,7 +17,15 @@
     cursor: pointer;
   }   
 
-.peeks{
+  [type="member"] .peeks{
+    bottom: 0;
+    position: absolute;
     margin: 3px;
     padding: 3px;
+  }
+
+  [type="member"] .image{
+      width:30px;
+      height: 30px;
+
   }

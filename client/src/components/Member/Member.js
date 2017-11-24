@@ -9,7 +9,9 @@ export class Member extends Component {
   }
 
   showLikes(event) {}
-
+  getImage() {
+    return ( <img className="image" src={"/users/avatar" + this.props.img} alt={this.props.value.name}/>);
+  }
   navigateToInvite() {
     this.props.history.push('/invite');
   }
@@ -32,8 +34,9 @@ export class Member extends Component {
           <i className="fa fa-plus-circle" title="Add member" onClick={this.navigateToInvite.bind(this) }></i>
     </div> : null;
     return (
-      <div className="member">
-        <div type="member">
+      <div  type="member" className="member" id={this.props.id}>
+        <div>
+            {this.getImage()}
             <div className="name">{this.props.value.name}</div>
             {display}
         </div>

@@ -13,9 +13,7 @@ export const Security = {
     return header;
   },
   get(key) {
-    if (!key)
-      key = this.hash;
-    var value = localStorage.getItem(key);
+    var value = !key ? localStorage.getItem(this.hash) : localStorage.getItem(key);
     if (!key) return value;
     return JSON.parse(value);
   },
@@ -103,7 +101,7 @@ export const Security = {
   },
   logout() {
     localStorage.clear();
-    //localStorage.removeItem(this.hash);
+  //localStorage.removeItem(this.hash);
   },
   avatar() {
     return new Promise((resolve, reject) => {
