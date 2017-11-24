@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.get('/register', function(req, res, next) {
+router.get('/registerd', function(req, res, next) {
   var parm = req.query.r;
   var decipher = JSON.parse(scrambler.decipherText(parm));
   if (moment().isAfter(moment(decipher.expires))) {
@@ -27,9 +27,7 @@ router.get('/register', function(req, res, next) {
       viewModel.userId = decipher.userId;
       viewModel.relation = invite._doc.guestRelation;
       viewModel.type = db.helper.findType(invite._doc.guestRelation);
-      res.render('register', {
-        viewModel
-      });
+      res.json(viewModel);
     });
   });
 });

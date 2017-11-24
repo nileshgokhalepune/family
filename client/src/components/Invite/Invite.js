@@ -13,7 +13,7 @@ class Invite extends Component {
     this.setState({
       loading: true
     });
-    Security.invite(this.parms, Security.get()).then(data => {
+    Security.invite(this.parms, window.location.host, Security.get()).then(data => {
       if (data && data.message) console.log(`Message:${data.message}`);
       this.navigateAway()
     }).catch(err => {

@@ -58,19 +58,31 @@ export const Security = {
         .catch(error => reject(error));
     });
   },
-  invite(guest) {
+  invite(guest, source) {
     return new Promise((resolve, reject) => {
       fetch('/users/invite', {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify({
-          guest: guest
+          guest: guest,
+          source: source
         })
       }).then(this.checkstatus)
         .then(this.parseJson)
         .then(data => resolve(data))
         .catch(err => reject(err));
     })
+  },
+  getRegData(ciphered) {
+    return new Promise((resolve, reject) => {
+      fetch('/registerd?r=' + ciphered, {
+        method: 'GET',
+        headers: this.getHeaders()
+      }).then(this.checkstatus)
+        .then(this.parseJson)
+        .then(data => resolve(data))
+        .catch(err => reject(err));
+    });
   },
   getData() {
     return new Promise((resolve, reject) => {
@@ -114,5 +126,35 @@ export const Security = {
   },
   setData(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
+  },
+  register(user) {
+    return new Promise((resolve, reject) => {
+      fetch('/users/create', {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({
+          user: user
+        })
+      }).then(this.checkstatus)
+        .then(this.parseJson)
+        .then(data => resolve(data))
+        .catch(err => reject(err));
+    });
+  },
+  relate(userId, newUserId, relation) {
+    return new Promise((resolve, reject) => {
+      fetch('/users/relate', {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify({
+          userId: userId,
+          newUserId: newUserId,
+          relation: relation
+        })
+      }).then(this.checkstatus)
+        .then(this.parseJson)
+        .then(data => resolve(data))
+        .catch(err => reject(err));
+    })
   }
 }

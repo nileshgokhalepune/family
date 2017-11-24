@@ -33,11 +33,12 @@ Scrambler.hashpassword = function(password, salt) {
 }
 
 Scrambler.generateUrl = function(req, obj) {
+  var host = req.body.source;
   var ciphered = this.cipherText(JSON.stringify(obj));
   var proto = req.protocol;
-  var host = req.get('host');
+  //var host = req.get('host');
   console.log(proto + "://" + host + "/register?r=" + ciphered);
-  return proto + "://" + host + "/register?r=" + ciphered;
+  return proto + "://" + host + "/register/" + ciphered;
 }
 
 module.exports = Scrambler;

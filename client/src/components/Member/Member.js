@@ -10,7 +10,7 @@ export class Member extends Component {
 
   showLikes(event) {}
   getImage() {
-    return ( <img className="image" src={"/users/avatar" + this.props.img} alt={this.props.value.name}/>);
+    return ( <img className="image" src={"/users/avatar/" + this.props.img} alt={this.props.value.name}/>);
   }
   navigateToInvite() {
     this.props.history.push('/invite');

@@ -146,6 +146,12 @@ router.get('/data', function(req, res, next) {
 router.post('/invite', function(req, res, next) {
   var store = req.headers.authorization.split(' ')[1];
   var guest = req.body.guest;
+  if (!guest.memberrelation || !guest.memberName || !guest.memberEmail) {
+    res.statusCode = 500;
+    res.statusMessage = "Invalid request";
+    res.end();
+    return;
+  }
   var deciphered = scrambler.decipherText(store);
   var decipheredJson = JSON.parse(deciphered);
   var userId = decipheredJson.memberId;
@@ -205,7 +211,7 @@ router.post('/invite', function(req, res, next) {
 
 router.post('/create', function(req, res, next) {
   if (req.body) {
-    var data = req.body;
+    var data = req.body.user;
     var salt = scrambler.createSalt(); //cipherText(data.userName + '');
     var password = scrambler.hashpassword(data.password, salt); //cipherText(data.password + salt);
     var user = new db.memberModel({

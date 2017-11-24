@@ -27,10 +27,6 @@ console.log(process.env.NODE_ENV);
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
-//app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
 
 app.use(cookieParser());
 if (process.env.NODE_ENV === "production")
@@ -41,8 +37,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-// app.route('/', index);
-// app.route('/users', users);
+
 app.use('/', index);
 app.use('/users', users);
 app.get('/message', function(req, res, next) {
