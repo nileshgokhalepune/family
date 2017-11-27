@@ -5,15 +5,49 @@ import { Connector } from '../Connector/Connector';
 import './Board.css';
 
 export class Board extends Component {
-  state = {
-    user: null
-  };
+  connectors;
+  currentElement;
+  compCount=0;
+  memberLoaded(ele) {
+    this.currentElement = ele;
+  }
+
+  componentDidMount() {
+    // this.setState({
+    //   connectors: this.connectors
+    // })
+  }
+  peersLoaded(ele) {
+    this.loadConnectors();
+    this.connectors.push(<Connector relative={ele} key={ele.id}  member={this.currentElement}/>);
+  }
+
+  parentsLoaded(ele) {
+    this.loadConnectors();
+    this.connectors.push(<Connector relative={ele} key={ele.id}  member={this.currentElement} />);
+  }
+
+  childrenLoaded(ele) {
+    this.loadConnectors();
+    this.connectors.push(<Connector relative={ele} key={ele.id} member={this.currentElement}/>)
+  }
+
+  loadConnectors() {
+    this.compCount--;
+    if (this.compCount == 0) {
+      this.setState({
+        connectors: this.connectors
+      })
+    }
+  }
+
   componentWillMount() {
+    this.connectors = [];
     Security.validate().then(data => {
       if (data.valid) {
         Security.getData().then(data => {
           this.setState({
-            user: data.member
+            user: data.member,
           });
         })
       }
@@ -31,29 +65,41 @@ export class Board extends Component {
   }
 
   renderMember(state) {
-    return <Member value={state} {...this.props} id="you" img={Security.get()} />
+    return <Member value={state} {...this.props} id="you" img={Security.get()} didLoad={this.memberLoaded.bind(this)} />
   }
 
   render() {
-    var peers = null;
-    var subordinates = null;
-    var parents = null;
-    var connectors = [];
+    var peers = [];
+    var subordinates = [];
+    var parents = [];
+
     if (this.state && this.state.user) {
       let family = this.state.user.family;
-      peers = family.map((f, i) => {
-        var peer = f.type === this.peer ? <Member value={f} key={i} id={"peer" + i} img={Security.get()} callbackPosts={(id) => alert('called' + i) }/> : '';
-        connectors.push(<Connector relative={"peer" + i} member={"you"} key={"peer" + i}/>)
-        return peer;
+      family.forEach((f, i) => {
+        if (f.type === this.peer) {
+          peers.push(<Member value={f} key={i} id={"peer" + i} img={Security.get()} callbackPosts={(id) => alert('called' + i) } didLoad={this.peersLoaded.bind(this)}/>);
+        }
+        if (f.type === this.children) {
+          subordinates.push(<Member value={f} key={i} id={"child" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.childrenLoaded.bind(this)}/>);
+        }
+        if (f.type === this.parents) {
+          parents.push(<Member value={f} key={i} id={"parent" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.parentsLoaded.bind(this)}/>);
+        }
       });
-      subordinates = family.map((f, i) => {
-        connectors.push(<Connector relative={"child" + i} member={"you"}  key={"child" + i}/>)
-        return f.type === this.children ? <Member value={f} key={i} id={"child" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) }/> : '';
-      });
-      parents = family.map((f, i) => {
-        connectors.push(<Connector relative={"parent" + i} member={"you"}  key={"parent" + i}/>)
-        return f.type === this.parents ? <Member value={f} key={i} id={"parent" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) }/> : '';
-      });
+      // peers = family.map((f, i) => {
+      //   var peer = f.type === this.peer ? <Member value={f} key={i} id={"peer" + i} img={Security.get()} callbackPosts={(id) => alert('called' + i) } didLoad={this.peersLoaded.bind(this)}/> : '';
+      //   //this.connectors.push(<Connector relative={"peer" + i} member={"you"} key={"peer" + i}/>)
+      //   return peer;
+      // });
+      // subordinates = family.map((f, i) => {
+      //   //this.connectors.push(<Connector relative={"child" + i} member={"you"}  key={"child" + i}/>)        
+      //   return f.type === this.children ? <Member value={f} key={i} id={"child" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.childrenLoaded.bind(this)}/> : '';
+      // });
+      // parents = family.map((f, i) => {
+      //   //this.connectors.push(<Connector relative={"parent" + i} member={"you"}  key={"parent" + i}/>)        
+      //   return f.type === this.parents ? <Member value={f} key={i} id={"parent" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.parentsLoaded.bind(this)}/> : '';
+      // });
+      this.compCount = peers.length + subordinates.length + parents.length;
       return (
         <div className="App">
         <div className="you">
@@ -61,7 +107,7 @@ export class Board extends Component {
             {parents}
             {peers}
             {subordinates}
-            {connectors}
+            {this.state.connectors}
         </div>
       </div>
       )

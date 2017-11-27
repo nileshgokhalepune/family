@@ -21,13 +21,19 @@ router.get('/registerd', function(req, res, next) {
   var viewModel = {};
   db.memberModel.findMember(decipher.userId, function(err, member) {
     db.inviteModel.findInvite(decipher.inviteId, function(err, invite) {
-      viewModel.name = invite._doc.guestName.split(' ')[0];
-      viewModel.lastName = invite._doc.guestName.split(' ')[1];
-      viewModel.email = invite._doc.guestEmail;
-      viewModel.userId = decipher.userId;
-      viewModel.relation = invite._doc.guestRelation;
-      viewModel.type = db.helper.findType(invite._doc.guestRelation);
-      res.json(viewModel);
+      if (invite && invite._doc) {
+        viewModel.name = invite.guestName.split(' ')[0];
+        viewModel.lastName = invite.guestName.split(' ')[1];
+        viewModel.email = invite.guestEmail;
+        viewModel.userId = decipher.userId;
+        viewModel.relation = invite.guestRelation;
+        viewModel.type = db.helper.findType(invite.guestRelation);
+        res.json(viewModel);
+      } else {
+        res.statusCode = 500;
+        res.statusMessage = "Something is not correct";
+        res.end();
+      }
     });
   });
 });

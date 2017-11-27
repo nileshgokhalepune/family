@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from '../logo.svg';
 import { Security } from '../service/Security';
 import './header.css';
 import mylogo from '../mylogo.svg';

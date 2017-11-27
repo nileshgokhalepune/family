@@ -183,7 +183,7 @@ module.exports.relationLookup = relationLookupModel;
 var helper = {};
 helper.peers = ["Wife", "Husband", "Brother", "Sister", "Friend"];
 helper.children = ["Son", "Daughter", "StepSon", "StepDaughter"];
-helper.parents = ["Father", "Mother"];
+helper.parents = ["Father", "Mother","Uncle","Aunt"];
 
 helper.findType = function(relation) {
   if (this.peers.find((p) => p === relation)) {

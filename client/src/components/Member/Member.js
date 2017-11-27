@@ -8,6 +8,10 @@ export class Member extends Component {
       this.props.callbackPosts(this.props.value.id);
   }
 
+  componentDidMount(){
+    this.props.didLoad(document.getElementById(this.props.id));
+  }
+
   showLikes(event) {}
   getImage() {
     return ( <img className="image" src={"/users/avatar/" + this.props.img} alt={this.props.value.name}/>);

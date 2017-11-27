@@ -1,5 +1,3 @@
-import { locale } from "moment";
-
 export const Security = {
   hash: '',
   ticket: '',
@@ -8,17 +6,17 @@ export const Security = {
       'Content-Type': 'application/json',
     }
     if (this.hash) {
-      header['Authorization'] = 'Bearer ' + localStorage.getItem(this.hash)
+      header['Authorization'] = 'Bearer ' + sessionStorage.getItem(this.hash)
     }
     return header;
   },
   get(key) {
-    var value = !key ? localStorage.getItem(this.hash) : localStorage.getItem(key);
+    var value = !key ? sessionStorage.getItem(this.hash) : sessionStorage.getItem(key);
     if (!key) return value;
     return JSON.parse(value);
   },
   set(key, value) {
-    localStorage.setItem(key, value);
+    sessionStorage.setItem(key, value);
   },
   getHash() {
     return new Promise((resolve, reject) => {
@@ -28,13 +26,13 @@ export const Security = {
         .then(res => res.json())
         .then(hash => {
           this.hash = hash;
-          var store = localStorage.getItem(hash);
+          var store = sessionStorage.getItem(hash);
           resolve(store);
         }).catch(err => reject(err));
     });
   },
   setHash(value) {
-    localStorage.setItem(this.hash, value);
+    sessionStorage.setItem(this.hash, value);
   },
   validate() {
     return new Promise((resolve, reject) => {
@@ -112,8 +110,7 @@ export const Security = {
     return response.json();
   },
   logout() {
-    localStorage.clear();
-  //localStorage.removeItem(this.hash);
+    sessionStorage.clear();
   },
   avatar() {
     return new Promise((resolve, reject) => {
@@ -125,7 +122,7 @@ export const Security = {
     })
   },
   setData(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
+    sessionStorage.setItem(key, JSON.stringify(value));
   },
   register(user) {
     return new Promise((resolve, reject) => {

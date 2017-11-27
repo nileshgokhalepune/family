@@ -8,7 +8,6 @@ import { Status } from '../../service/Enums';
 import { Loading } from '../Loading';
 import Login from '../Login/Login';
 import '../../../node_modules/font-awesome/css/font-awesome.css';
-import logo from '../../logo.svg';
 
 class App extends Component {
   constructor(props) {
@@ -67,20 +66,27 @@ class App extends Component {
     var loader;
     var component;
     var store = Security.get('user');
-    if (this.props.location.pathname.indexOf('register') !== -1 && this.state.loggedIn) {
+    if (this.props.location.pathname.indexOf('register') !== -1) {
+      debugger;
       Security.logout();
     }
     if (this.state && this.state.status === Status.Loading) {
       loader = <Loading />
       component = null;
-    } else if (!this.state.store && this.state.status === Status.Loaded && this.props.location.pathname.indexOf('register') === -1) {
+    } else if (!this.state.store && this.state.status === Status.Loaded) {
       loader = null;
       component = <Login handler={this.loggedin}/>
     } else if (this.state.status === Status.Loaded && this.state.loggedIn) {
       loader = null;
       component = <Main />
     }
-
+    if (this.props.location.pathname.indexOf('register') !== -1) {
+      this.setState({
+        store: null
+      });
+      store = null;
+      component = <Main/>
+    }
     return (
       <div>
         <Header {...this.props} storedata={store} hash={this.state.store} /> 
