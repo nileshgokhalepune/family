@@ -28,6 +28,14 @@ export class Connector extends Component {
     this.drawPath(startX, startY, endX, endY);
   }
 
+  signum(x) {
+    return (x < 0) ? -1 : 1;
+  }
+
+  absolute(x) {
+    return (x < 0) ? -x : x;
+  }
+
   drawPath(startX, startY, endX, endY) {
     var svg = this.refs[this.props.member.id + this.props.relative.id];
     var stroke = 10;
@@ -47,12 +55,12 @@ export class Connector extends Component {
       arc1 = 1;
       arc2 = 0;
     }
-    this.path = "d", "M" + startX + " " + startY +
-    " V " + (startY + delta) +
-    " A " + delta + " " + delta + " 0 0 " + arc1 + " " + (startX + delta * this.signum(deltaX)) + " " + (startY + 2 * delta) +
-    " H " + (endX - delta * this.signum(deltaX)) +
-    " A " + delta + " " + delta + " 0 0 " + arc2 + " " + endX + " " + (startY + 3 * delta) +
-    " V " + endY;
+    this.path = "M" + startX + " " + startY +
+      " V " + (startY + delta) +
+      " A " + delta + " " + delta + " 0 0 " + arc1 + " " + (startX + delta * this.signum(deltaX)) + " " + (startY + 2 * delta) +
+      " H " + (endX - delta * this.signum(deltaX)) +
+      " A " + delta + " " + delta + " 0 0 " + arc2 + " " + endX + " " + (startY + 3 * delta) +
+      " V " + endY;
 
     this.setState({
       path: this.path
