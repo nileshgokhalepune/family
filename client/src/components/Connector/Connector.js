@@ -10,8 +10,8 @@ export class Connector extends Component {
       startEle = endEle;
       endEle = temp;
     }
-    var svgTop = this.refs[this.props.member.id + this.props.relative.id].getBoundingClientRect().top;
-    var svgLeft = this.refs[this.props.member.id + this.props.relative.id].getBoundingClientRect().left;
+    var svgTop = this.refs[this.props.member.id + this.props.relative.id].offsetTop; //.getBoundingClientRect().top;
+    var svgLeft = this.refs[this.props.member.id + this.props.relative.id].offsetLeft; //.getBoundingClientRect().left;
     var startCoord = {
       top: startEle.offsetTop,
       left: startEle.offsetLeft
@@ -37,7 +37,7 @@ export class Connector extends Component {
   }
 
   drawPath(startX, startY, endX, endY) {
-    var svg = this.refs[this.props.member.id + this.props.relative.id];
+    var svg = this.refs["svg" + this.props.member.id + this.props.relative.id];
     var stroke = 10;
     if (svg.height.baseVal.value < endY) {
       svg.setAttribute("height", endY);
@@ -55,7 +55,7 @@ export class Connector extends Component {
       arc1 = 1;
       arc2 = 0;
     }
-    this.path = "M" + startX + " " + startY +
+    this.path = "M " + startX + " " + startY +
       " V " + (startY + delta) +
       " A " + delta + " " + delta + " 0 0 " + arc1 + " " + (startX + delta * this.signum(deltaX)) + " " + (startY + 2 * delta) +
       " H " + (endX - delta * this.signum(deltaX)) +
@@ -71,14 +71,20 @@ export class Connector extends Component {
     if (!this.props.member || !this.props.relative) {
       return null;
     }
-    var actualPAth = "";
+    var actualPath = "";
     if (this.state && this.state.path) {
-      actualPAth = this.state.path;
+      actualPath = this.state.path;
     }
     return (
-      <svg ref={this.props.member.id + this.props.relative.id}>
-          <path d={actualPAth}/>
-      </svg>
+      <div  ref={this.props.member.id + this.props.relative.id}  style={{
+        position: 'absolute',
+        top: 0,
+        left: 0
+      }}>
+        <svg  ref={"svg" + this.props.member.id + this.props.relative.id} xmlns="http://www.w3.org/2000/svg"> 
+            <path d={actualPath} stroke="green" fill="none" stokewidth="1"/> 
+        </svg>
+      </div>
     )
   }
 }

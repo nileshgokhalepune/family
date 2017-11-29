@@ -8,7 +8,7 @@ export class Member extends Component {
       this.props.callbackPosts(this.props.value.id);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.didLoad(document.getElementById(this.props.id));
   }
 
@@ -32,13 +32,21 @@ export class Member extends Component {
       <div className="peeks">
             <i title="Posts" className="fa fa-list" onClick={(event) => this.showPosts(event)}></i>
         </div>);
-
+    var x = 10,
+      y = 10;
+    if (this.props.coords) {
+      x = this.props.coords.x;
+      y = this.props.coords.y;
+    }
     let inviteLink = type === 'self' ?
       <div>
           <i className="fa fa-plus-circle" title="Add member" onClick={this.navigateToInvite.bind(this) }></i>
     </div> : null;
     return (
-      <div  type="member" className="member" id={this.props.id}>
+      <div  type="member" className="member" id={this.props.id} style={{
+        top: x,
+        left: y
+      }}>
         <div>
             {this.getImage()}
             <div className="name">{this.props.value.name}</div>
