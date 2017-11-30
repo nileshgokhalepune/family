@@ -9,12 +9,12 @@ export class Board extends Component {
   currentElement;
   compCount=0;
   positions;
-  memberLoaded(ele) {
+  memberLoaded(ele) { 
     this.currentElement = ele;
   }
 
   componentDidMount() {
-    this.positions = this.generatePositionArray(1800, 1600, 40, 10);
+    this.positions = this.generatePositionArray(600, 600, 200, 10);
   // this.setState({
   //   connectors: this.connectors
   // })
@@ -101,7 +101,7 @@ export class Board extends Component {
   }
 
   renderMember(state) {
-    return <Member value={state} {...this.props} id="you" img={Security.get()} didLoad={this.memberLoaded.bind(this)} />
+    return <Member value={state} {...this.props} id="you" img={Security.get()} key={"you"} didLoad={this.memberLoaded.bind(this)} />
   }
 
   render() {
@@ -111,18 +111,19 @@ export class Board extends Component {
     var coords;
     if (this.state && this.state.user) {
       let family = this.state.user.family;
+      //peers.push(this.renderMember(this.state.user));
       family.forEach((f, i) => {
         if (f.type === this.peer) {
           coords = this.getRandomPositions(this.positions, true);
-          peers.push(<Member value={f} key={i} id={"peer" + i} img={Security.get()} callbackPosts={(id) => alert('called' + i) } didLoad={this.peersLoaded.bind(this)} coords={coords}/>);
+          peers.push(<Member value={f} key={i} id={"peer" + i} img={Security.get()} callbackPosts={(id) => alert('called' + i) } didLoad={this.peersLoaded.bind(this)}/>);
         }
         if (f.type === this.children) {
           coords = this.getRandomPositions(this.positions, true);
-          subordinates.push(<Member value={f} key={i} id={"child" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.childrenLoaded.bind(this)} coords={coords}/>);
+          subordinates.push(<Member value={f} key={i} id={"child" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.childrenLoaded.bind(this)}/>);
         }
         if (f.type === this.parents) {
           coords = this.getRandomPositions(this.positions, true);
-          parents.push(<Member value={f} key={i} id={"parent" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.parentsLoaded.bind(this)} coords={coords}/>);
+          parents.push(<Member value={f} key={i} id={"parent" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.parentsLoaded.bind(this)} />);
         }
       });
       // peers = family.map((f, i) => {
@@ -142,10 +143,16 @@ export class Board extends Component {
       return (
         <div className="App">
         <div className="you">
-            {this.renderMember(this.state.user)}
-            {parents}
+        {this.renderMember(this.state.user)}
+            <div className="parents">
+              {parents}
+            </div>
+            <div className="peers">
             {peers}
-            {subordinates}
+            </div>
+            <div className="children">
+              {subordinates}
+            </div>
         </div>
             {this.state.connectors}
       </div>

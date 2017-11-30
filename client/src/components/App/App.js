@@ -81,10 +81,6 @@ class App extends Component {
       component = <Main />
     }
     if (this.props.location.pathname.indexOf('register') !== -1) {
-      this.setState({
-        store: null
-      });
-      store = null;
       component = <Main/>
     }
     return (

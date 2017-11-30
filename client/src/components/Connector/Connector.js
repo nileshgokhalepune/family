@@ -5,6 +5,7 @@ export class Connector extends Component {
   componentDidMount() {
     var startEle = this.props.member;
     var endEle = this.props.relative;
+
     if (startEle.offsetTop > endEle.offsetTop) {
       var temp = startEle;
       startEle = endEle;
@@ -12,20 +13,53 @@ export class Connector extends Component {
     }
     var svgTop = this.refs[this.props.member.id + this.props.relative.id].offsetTop; //.getBoundingClientRect().top;
     var svgLeft = this.refs[this.props.member.id + this.props.relative.id].offsetLeft; //.getBoundingClientRect().left;
-    var startCoord = {
-      top: startEle.offsetTop,
-      left: startEle.offsetLeft
-    }
-    var endCoord = {
-      top: endEle.offsetTop,
-      left: endEle.offsetLeft
-    }
-    var startX = startCoord.left + 0.5 * startEle.scrollWidth + svgLeft;
-    var startY = startCoord.top - svgTop;
+    var startCoord = this.getSourceCoordinates(startEle, endEle);
+    // {
+    //   top: startEle.offsetTop == endEle.offsetTop ? startEle.offsetTop + 50 : startEle.offsetTop,
+    //   left: startEle.offsetLeft > endEle.offsetLeft ? endEle.offsetLeft + 100 : startEle.offsetLeft + 100
+    // }
+    var endCoord = this.getTargetCoordinates(startEle, endEle);
+    // {
+    //   top: startEle.offsetTop == endEle.offsetTop ? endEle.offsetTop + 50 : endEle.offsetTop,
+    //   left: startEle.offsetLeft > endEle.offsetLeft ? endEle.offsetLeft : startEle.offsetLeft
+    // }
+    var startX = startCoord.left; //+ 0.5 * startEle.scrollWidth + svgLeft;
+    var startY = startCoord.top;// < endCoord.top ? startCoord.top + 0.5 * startEle.scrollHeight : startCoord.top - svgTop;
 
-    var endX = endCoord.left + 0.5 * endEle.scrollWidth - svgLeft;
-    var endY = endCoord.top - svgTop;
+    var endX = endCoord.left;// + 0.5 * endEle.scrollWidth - svgLeft;
+    var endY = endCoord.top;// - svgTop;
     this.drawPath(startX, startY, endX, endY);
+  }
+
+  getSourceCoordinates(sourceElement, targetElement) {
+    var startPos = {};
+    //This means the source element is below target so we definitely want to start the line from bottom of target element.
+    startPos.left = sourceElement.offsetTop > targetElement.offsetTop ? targetElement.offsetLeft + targetElement.offsetWidth / 2 : sourceElement.offsetLeft + sourceElement.offsetWidth / 2; //Start from offsetleft of target and move to middle of the element.
+    startPos.top = sourceElement.offsetTop > targetElement.offsetTop ? targetElement.offsetTop + targetElement.offsetHeight : sourceElement.offsetTop + sourceElement.offsetHeight;
+
+    if (sourceElement.offsetTop === targetElement.offsetTop) { //This means both the elememts are at same level. we need to figure out which one is the left and which is right.
+      //This means source element is to the right of the target so we take target elements right middle position.
+      startPos.top = sourceElement.offsetTop + sourceElement.offsetHeight / 2;
+
+    }
+    if (sourceElement.offsetLeft === targetElement.offsetLeft) {
+      startPos.left = sourceElement.offsetLeft + sourceElement.offsetWidth / 2;
+    }
+    return startPos;
+  }
+
+  getTargetCoordinates(sourceElement, targetElement) {
+    var endPos = {};
+    endPos.left = targetElement.offsetLeft > sourceElement.offsetLeft ? targetElement.offsetLeft + targetElement.offsetWidth / 2 : sourceElement.offsetLeft + sourceElement.offsetWidth / 2;
+    endPos.top = targetElement.offsetTop > sourceElement.offsetTop ? targetElement.offsetTop : sourceElement.offsetTop;
+    if (targetElement.offsetTop === sourceElement.offsetTop) {
+      endPos.top = targetElement.offsetTop + targetElement.offsetWidth / 2;
+    }
+    
+    if (sourceElement.offsetLeft === targetElement.offsetLeft) {
+      endPos.left = targetElement.offsetLeft + targetElement.offsetWidth / 2;
+    }
+    return endPos;
   }
 
   signum(x) {

@@ -196,8 +196,8 @@ helper.findType = function(relation) {
 }
 
 helper.findGender = function(relation) {
-  var male = ["Husband", "Brother", "Nephew", "Father", "Son"];
-  var female = ["Wife", "Sister", "Neice", "Mother", "Daughter"];
+  var male = ["Husband", "Brother", "Nephew", "Father", "Son","Uncle"];
+  var female = ["Wife", "Sister", "Neice", "Mother", "Daughter","Aunt"];
   if (male.find((g) => g === relation))
     return "Male";
   if (female.find((g) => g === relation))
