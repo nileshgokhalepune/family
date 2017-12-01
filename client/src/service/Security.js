@@ -153,5 +153,16 @@ export const Security = {
         .then(data => resolve(data))
         .catch(err => reject(err));
     })
+  },
+  findRelation(relation) {
+    return new Promise((resolve, reject) => {
+      fetch('/users/relation/find/' + relation, {
+        method: 'GET',
+        headers: this.getHeaders()
+      }).then(this.checkstatus)
+        .then(this.parseJson)
+        .then(data => resolve(data))
+        .catch(err => reject(err));
+    })
   }
 }

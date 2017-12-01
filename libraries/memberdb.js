@@ -44,7 +44,10 @@ memberModel.findMember = function(objectId, callback) {
   var user = memberModel.findOne({
     _id: objectId
   }, {
-    "password": 0
+    "password": 0,
+    "salt": 0,
+    "_id": 0,
+    "family.userId": 0
   }, function(err, member) {
     callback(err, member);
   });
@@ -183,7 +186,7 @@ module.exports.relationLookup = relationLookupModel;
 var helper = {};
 helper.peers = ["Wife", "Husband", "Brother", "Sister", "Friend"];
 helper.children = ["Son", "Daughter", "StepSon", "StepDaughter"];
-helper.parents = ["Father", "Mother","Uncle","Aunt"];
+helper.parents = ["Father", "Mother", "Uncle", "Aunt"];
 
 helper.findType = function(relation) {
   if (this.peers.find((p) => p === relation)) {
@@ -196,8 +199,8 @@ helper.findType = function(relation) {
 }
 
 helper.findGender = function(relation) {
-  var male = ["Husband", "Brother", "Nephew", "Father", "Son","Uncle"];
-  var female = ["Wife", "Sister", "Neice", "Mother", "Daughter","Aunt"];
+  var male = ["Husband", "Brother", "Nephew", "Father", "Son", "Uncle"];
+  var female = ["Wife", "Sister", "Neice", "Mother", "Daughter", "Aunt"];
   if (male.find((g) => g === relation))
     return "Male";
   if (female.find((g) => g === relation))

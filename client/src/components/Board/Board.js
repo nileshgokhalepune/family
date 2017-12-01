@@ -9,7 +9,8 @@ export class Board extends Component {
   currentElement;
   compCount=0;
   positions;
-  memberLoaded(ele) { 
+
+  memberLoaded(ele) {
     this.currentElement = ele;
   }
 
@@ -44,19 +45,23 @@ export class Board extends Component {
   }
 
   componentWillMount() {
-    this.connectors = [];
-    Security.validate().then(data => {
-      if (data.valid) {
-        Security.getData().then(data => {
-          this.setState({
-            user: data.member,
-          });
-        })
-      }
-    }).catch(err => {
-      alert('Invalid session');
-      this.props.history.push('/login');
-    })
+    if (this.props.userId) {
+
+    } else {
+      this.connectors = [];
+      Security.validate().then(data => {
+        if (data.valid) {
+          Security.getData().then(data => {
+            this.setState({
+              user: data.member,
+            });
+          })
+        }
+      }).catch(err => {
+        alert('Invalid session');
+        this.props.history.push('/login');
+      });
+    }
   }
 
   getRandomInt(min, max) {

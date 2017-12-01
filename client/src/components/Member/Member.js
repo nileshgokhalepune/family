@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-import './Member.css';
+import './Member.css'; 
 
 export class Member extends Component {
   showPosts(event) {
@@ -26,12 +26,13 @@ export class Member extends Component {
     if (type === 'self') {
       display = 'You'
     } else {
-      display = 'Your ' + this.props.value.relation;
+      display = this.props.value.relation;
     }
     let showPeeks = type === 'self' ? null : (
-      <div className="peeks">
-            <i title="Posts" className="fa fa-list" onClick={(event) => this.showPosts(event)}></i>
-        </div>);
+      <div>
+              <i title="Posts" className="fa fa-list" onClick={(event) => this.showPosts(event)}></i>
+          </div>
+      );
     var x = 10,
       y = 10;
     if (this.props.coords) {
@@ -40,21 +41,26 @@ export class Member extends Component {
     }
     let inviteLink = type === 'self' ?
       <div>
-          <i className="fa fa-plus-circle" title="Add member" onClick={this.navigateToInvite.bind(this) }></i>
-    </div> : null;
+            <i className="fa fa-plus-circle" title="Add member" onClick={this.navigateToInvite.bind(this) }></i>
+      </div>
+      : null;
     return (
       <div  type="member" className="member" id={this.props.id} style={{
         top: x,
         left: y
       }}>
         <div>
-            {this.getImage()}
+          <div>
+              {this.getImage()}
             <div className="name">{this.props.value.name}</div>
-            {display}
-        </div>
-          {showPeeks} 
-          {inviteLink}
-        </div>
+              {display}
+            <div className="shortMenu">
+              {showPeeks} 
+              {inviteLink}
+            </div>
+          </div>
+        </div>   
+      </div>
     )
   }
 }

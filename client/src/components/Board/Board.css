@@ -1,3 +1,7 @@
 .you{
     display: table-cell; 
   }
+
+  .parents{
+    height: auto;
+  }
