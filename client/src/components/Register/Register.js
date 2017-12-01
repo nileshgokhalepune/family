@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Security } from '../../service/Security'; 
+import { Security } from '../../service/Security';
 
 class Register extends Component {
 
@@ -31,7 +31,10 @@ class Register extends Component {
   }
 
   onFieldChange(event) {
-    this.state.regData[event.target.name] = event.target.value;
+    this.parms[event.target.name] = event.target.value;
+    this.setState({
+      regData: this.parms
+    });
   }
 
 

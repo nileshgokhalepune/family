@@ -20,8 +20,9 @@ var transport = mailer.createTransport(smtpTransport({
     password: '8:F%,(+g'
   }
 }));
-
+var token;
 router.use(function timelog(req, res, next) {
+  token = scrambler.getTokenObject(req);
   console.log('Time: ' + Date.now());
   next();
 });
@@ -126,9 +127,7 @@ router.post('/ticket', function(req, res) {
 });
 
 router.get('/data', function(req, res, next) {
-  var deciphered = scrambler.decipherText(req.headers.authorization.split(' ')[1]);
-  var decipheredJson = JSON.parse(deciphered);
-  db.memberModel.findMember(decipheredJson.memberId, function(err, member) {
+  db.memberModel.findMember(token.memberId, function(err, member) {
     if (err) {
       res.json({
         message: "Not able to find member"
@@ -145,7 +144,6 @@ router.get('/data', function(req, res, next) {
 
 router.post('/invite', function(req, res, next) {
   req.secure
-  var store = req.headers.authorization.split(' ')[1];
   var guest = req.body.guest;
   if (!guest.memberrelation || !guest.memberName || !guest.memberEmail) {
     res.statusCode = 500;
@@ -153,9 +151,7 @@ router.post('/invite', function(req, res, next) {
     res.end();
     return;
   }
-  var deciphered = scrambler.decipherText(store);
-  var decipheredJson = JSON.parse(deciphered);
-  var userId = decipheredJson.memberId;
+  var userId = token.memberId;
   guest.userId = userId;
   db.memberModel.findMember(userId, function(err, member) {
     db.inviteModel.findInvites(userId, function(err, result) {
@@ -334,6 +330,15 @@ router.get('/avatar/:payload', function(req, res, next) {
   }
 });
 
+router.get('/relation/find/:relation', function(req, res, next) {
+  if (!req.params.relation) {
+    res.statusCode = 500;
+    res.statusMessage = "Relation not specified";
+    res.send();
+    return;
+  } else {
+  }
+})
 module.exports = router;
 
 function getCounterRelation(relation, targetGender) {

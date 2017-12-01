@@ -35,11 +35,18 @@ Scrambler.hashpassword = function(password, salt) {
 Scrambler.generateUrl = function(req, obj) {
   var host = req.body.source;
   var ciphered = this.cipherText(JSON.stringify(obj));
-  var proto = req.headers['x-forwarded-proto']; 
+  var proto = req.headers['x-forwarded-proto'];
   console.log(proto);
   console.log(req.protocol);
   console.log(proto + "://" + host + "/register/" + ciphered);
   return proto + "://" + host + "/register/" + ciphered;
+}
+
+Scrambler.getTokenObject = function(req) {
+  var store = req.headers.authorization.split(' ')[1];
+  var deciphered = this.decipherText(store);
+  var decipheredJson = JSON.parse(deciphered);
+  return decipheredJson;
 }
 
 module.exports = Scrambler;

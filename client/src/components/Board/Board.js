@@ -37,7 +37,7 @@ export class Board extends Component {
 
   loadConnectors() {
     this.compCount--;
-    if (this.compCount == 0) {
+    if (this.compCount === 0) {
       this.setState({
         connectors: this.connectors
       })

@@ -12,38 +12,55 @@ class Invite extends Component {
   componentWillMount() {
     this.setState({
       member: {},
-      lockFields:true
+      lockFields: true
     })
   }
 
   findRelation(obj) {
+    if (!obj.target.value) {
+      alert('You must select the relation, to continue inviting your relative');
+      return;
+    }
     this.setState({
       loading: true
     });
     Security.findRelation(obj.target.value)
       .then(data => {
-        var member = {
-          email: data.email,
-          memberName: data.memberName
-        }
+        alert(data);
+         var member = {};
+        //   email: data.email,
+        //   memberName: data.memberName
+        // }
         this.setState({
-          member: member
+          member: member,
+          loading: false
         })
       })
-      .catch(err => alert(err));
+      .catch(err => {
+        alert(err)
+        this.setState({
+          loading: false
+        })
+      });
   }
   navigateToBoard(event) {
     event.preventDefault();
-    this.setState({
-      loading: true
-    });
-    Security.invite(this.parms, window.location.host, Security.get()).then(data => {
-      if (data && data.message) console.log(`Message:${data.message}`);
-      this.navigateAway()
-    }).catch(err => {
-      alert(err);
-      this.navigateAway()
-    });
+    
+    if (!this.parms.memberrelation || !this.parms.memberName || !this.parms.memberEmail) {
+      alert('All fields are mandatory, to continue with the invitation');
+      return;
+    } else {
+      this.setState({
+        loading: true
+      });
+      Security.invite(this.parms, window.location.host, Security.get()).then(data => {
+        if (data && data.message) console.log(`Message:${data.message}`);
+        this.navigateAway()
+      }).catch(err => {
+        alert(err);
+        this.navigateAway()
+      });
+    }
   }
 
   onFieldChange(event) {
@@ -55,14 +72,14 @@ class Invite extends Component {
     if (this.state && this.state.loading)
       showLoading = <Loading />
 
-    if(this.parms)
-    return (
-      <div>
+    if (this.parms)
+      return (
+        <div>
       <form onChange={(event) => this.onFieldChange(event)}>
           <div style={{
-              textAlign: 'left',
-              margin: '10px'
-            }}>
+          textAlign: 'left',
+          margin: '10px'
+        }}>
                 <div className="form-group">
                 
                   <label>Relation:
@@ -97,7 +114,7 @@ class Invite extends Component {
         </form>
         {showLoading}
         </div>
-      );
+        );
   }
 }
 
