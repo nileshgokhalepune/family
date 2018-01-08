@@ -20,36 +20,48 @@ var memberSchema = new mongoose.Schema({
 
 var memberModel = mongoose.model('member', memberSchema, 'member');
 
-memberModel.auth = function(username, password, callback) {
-  var user = memberModel.findOne({
-    userName: username
-  }, {
-    password: 1,
-    salt: 1,
-    name: 1
-  }, function(err, member) {
-    if (err) {
-      callback(err, null);
-      console.bind(console, 'Error while trying to retrieve user!');
-      throw err;
-    } else if (!member) {
-      callback("Not found", null);
-    } else {
-      callback(null, member);
-    }
-  });
+memberModel.auth = function(username, password) {
+  return new Promise((resolve, reject) => {
+    var user = memberModel.findOne({
+      userName: username
+    }, {
+      password: 1,
+      salt: 1,
+      name: 1
+    }, function(err, member) {
+      if (err) {
+        reject({
+          code: 500,
+          message: "Server Error"
+        });
+        console.bind(console, 'Error while trying to retrieve user!');
+      } else if (!member) {
+        reject({
+          code: 404,
+          message: "Not found"
+        });
+      } else {
+        resolve(member);
+      }
+    });
+  })
+
 }
 
-memberModel.findMember = function(objectId, callback) {
-  var user = memberModel.findOne({
-    _id: objectId
-  }, {
-    "password": 0,
-    "salt": 0,
-    "_id": 0,
-    "family.userId": 0
-  }, function(err, member) {
-    callback(err, member);
+memberModel.findMember = function(objectId) {
+  return new Promise((resolve, reject) => {
+    var user = memberModel.findOne({
+      _id: objectId
+    }, {
+      "password": 0,
+      "salt": 0,
+      "_id": 0,
+      "family.userId": 0
+    }, function(err, member) {
+      if (err) reject(err);
+      resolve(member);
+    //callback(err, member);
+    });
   });
 };
 
@@ -66,6 +78,7 @@ memberModel.save = function(user, callback) {
     callback('User information cannot be empty', null);
   }
 }
+
 
 memberModel.addFamilyMember = function(user, familyMember, callback) {
   if (user && familyMember) {
@@ -147,10 +160,10 @@ var relationLookupModel = mongoose.model('relationmap', relationLookupSchema, 'r
 
 relationLookupModel.lookup = function(relation, callback) {
   relationLookupModel.find({
-    from: relation
+    "maps.from": relation
   }, {
-    to: 1,
-    from: -1
+    "maps.to": 1,
+    "maps.from": -1
   }, (err, res) => {
     if (err) {
       console.log("Relation not found");
@@ -158,10 +171,10 @@ relationLookupModel.lookup = function(relation, callback) {
     }
     if (!res || res.length <= 0) {
       relationLookupModel.find({
-        to: relation
+        "maps.to": relation
       }, {
-        from: 1,
-        to: -1
+        "maps.from": 1,
+        "maps.to": -1
       }, (err1, res1) => {
         if (err1) {
           callback('Not found', null);

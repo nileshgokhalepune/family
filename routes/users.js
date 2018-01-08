@@ -90,55 +90,55 @@ router.post('/ticket', function(req, res) {
   var ipAddress = db.helper.getClientIP(req);
   var encrypted = scrambler.cipherText(ipAddress);
   console.log(encrypted);
-  db.memberModel.auth(req.body.userName, req.body.password, function(err, member) {
-    if (err) {
-      res.statusCode = 404;
-      res.statusMessage = "Invalid username or password";
-      res.send();
-    } else {
-      var hashed = scrambler.hashpassword(req.body.password, member.salt);
+  db.memberModel.auth(req.body.userName, req.body.password)
+    .then(data => {
+      var hashed = scrambler.hashpassword(req.body.password, data.salt);
       console.log(`Member Found - ${hashed}`);
-      if (hashed === member.password) {
+      if (hashed === data.password) {
         var cipherJson = {
-          memberId: member._doc._id,
-          memberName: member._doc.username,
+          memberId: data._doc._id,
+          memberName: data._doc.username,
           date: Date.now(),
           ip: ipAddress,
-          memberEmail: member._doc.email
+          memberEmail: data._doc.email
         };
         var ticket = scrambler.cipherText(JSON.stringify(cipherJson));
-        console.log(`Ticket created ${ticket}`);
-        delete member.password;
-        delete member.salt;
+        console.log(`Ticket created ${ticket}`); 
         res.json({
           encrypted: ticket,
           user: {
-            name: member.name,
+            name: data.name,
             lastLoggedIn: moment()
           }
         });
-      } else {
-        res.status = 401;
-        res.statusMessage = "Invalid username or password";
-        res.send();
       }
+    }).catch(err => {
+    if (err.code === 500) {
+      res.statusCode = 404;
+      res.json({
+        message: "Invalid username or password"
+      });
+    } else if (err.code === 404) {
+      res.statusCode = 404;
+      res.json({
+        message: "Not found"
+      }) ;
     }
+    res.send();
   });
 });
 
 router.get('/data', function(req, res, next) {
-  db.memberModel.findMember(token.memberId, function(err, member) {
-    if (err) {
+  db.memberModel.findMember(token.memberId)
+    .then(data => {
       res.json({
-        message: "Not able to find member"
-      });
-    }
-    if (member) {
-      res.json({
-        member: member._doc,
-        name: member._doc.name
-      });
-    }
+        member: data._doc,
+        name: data._doc.name
+      })
+    }).catch(err => {
+    res.json({
+      message: "Not able to find member"
+    });
   });
 })
 
@@ -234,6 +234,17 @@ router.post('/relate', function(req, res, next) {
   var originalUserId = req.body.userId;
   var newUserId = req.body.newUserId;
   var relation = req.body.relation;
+  db.memberModel.findMember(originalUserId).then(original => {
+    db.memberModel.findMember(newUserId).then(newuser => {
+
+    }).catch(err => {
+      throw "The ew member was not found";
+    })
+  }).catch(err => {
+    res.status = 404;
+    res.statusMessage = "User who invited was not found";
+    res.send();
+  })
   db.memberModel.findMember(originalUserId, function(err, member) {
     if (err || !member) {
       res.statusCode = 404;
@@ -288,18 +299,13 @@ router.post('/relate', function(req, res, next) {
 });
 
 router.get('/valid', function(req, res, next) {
-  if (req.headers.authorization)
-    var authHeader = req.headers.authorization.split(' ')[1];
   res.statusCode = 200;
-  if (authHeader && authHeader !== undefined && authHeader !== 'undefined') {
-    var obj = JSON.parse(scrambler.decipherText(authHeader));
-    if (obj.date) {
-      res.json({
-        message: 'Active',
-        valid: true
-      });
-      return;
-    }
+  if (token.date) {
+    res.json({
+      message: 'Active',
+      valid: true
+    });
+    return;
   }
   res.json({
     message: 'Inactive',
@@ -330,13 +336,14 @@ router.get('/avatar/:payload', function(req, res, next) {
   }
 });
 
-router.get('/relation/find/:relation', function(req, res, next) {
+router.get('/relation/find', function(req, res, next) {
   if (!req.params.relation) {
     res.statusCode = 500;
     res.statusMessage = "Relation not specified";
     res.send();
     return;
   } else {
+    
   }
 })
 module.exports = router;

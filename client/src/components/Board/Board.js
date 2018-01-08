@@ -55,6 +55,7 @@ export class Board extends Component {
             this.setState({
               user: data.member,
             });
+            Security.setCurrent(data.member);
           })
         }
       }).catch(err => {
@@ -131,19 +132,6 @@ export class Board extends Component {
           parents.push(<Member value={f} key={i} id={"parent" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.parentsLoaded.bind(this)} />);
         }
       });
-      // peers = family.map((f, i) => {
-      //   var peer = f.type === this.peer ? <Member value={f} key={i} id={"peer" + i} img={Security.get()} callbackPosts={(id) => alert('called' + i) } didLoad={this.peersLoaded.bind(this)}/> : '';
-      //   //this.connectors.push(<Connector relative={"peer" + i} member={"you"} key={"peer" + i}/>)
-      //   return peer;
-      // });
-      // subordinates = family.map((f, i) => {
-      //   //this.connectors.push(<Connector relative={"child" + i} member={"you"}  key={"child" + i}/>)        
-      //   return f.type === this.children ? <Member value={f} key={i} id={"child" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.childrenLoaded.bind(this)}/> : '';
-      // });
-      // parents = family.map((f, i) => {
-      //   //this.connectors.push(<Connector relative={"parent" + i} member={"you"}  key={"parent" + i}/>)        
-      //   return f.type === this.parents ? <Member value={f} key={i} id={"parent" + i} img={Security.get()}  callbackPosts={(id) => alert('called' + i) } didLoad={this.parentsLoaded.bind(this)}/> : '';
-      // });
       this.compCount = peers.length + subordinates.length + parents.length;
       return (
         <div className="App">

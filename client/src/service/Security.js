@@ -1,6 +1,7 @@
 export const Security = {
   hash: '',
   ticket: '',
+  current: {},
   getHeaders() {
     var header = {
       'Content-Type': 'application/json',
@@ -23,10 +24,11 @@ export const Security = {
       fetch('/users/hash', {
         headers: this.getHeaders()
       })
-        .then(res => res.json())
-        .then(hash => {
-          this.hash = hash;
-          var store = sessionStorage.getItem(hash);
+        .then(this.checkstatus)
+        .then(this.parseJson)
+        .then(data => {
+          this.hash = data;
+          var store = sessionStorage.getItem(data);
           resolve(store);
         }).catch(err => reject(err));
     });
@@ -158,9 +160,9 @@ export const Security = {
         .catch(err => reject(err));
     })
   },
-  findRelation(relation) {
+  findRelations() {
     return new Promise((resolve, reject) => {
-      fetch('/users/relation/find/' + relation, {
+      fetch('/users/relation/find', {
         method: 'GET',
         headers: this.getHeaders()
       }).then(this.checkstatus)
@@ -168,5 +170,11 @@ export const Security = {
         .then(data => resolve(data))
         .catch(err => reject(err));
     })
+  },
+  setCurrent(current){
+    this.current =current;
+  },
+  getCurrent(){
+    return this.current;
   }
 }

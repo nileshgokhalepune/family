@@ -1,0 +1,10 @@
+.existingRelation{
+    width: 100%; 
+    border-bottom:1px solid gray;
+}
+
+.inviteForm{
+    border-top: 1px solid navy;
+    border-bottom: 1px solid navy;
+    width: auto; 
+}

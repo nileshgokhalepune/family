@@ -43,7 +43,9 @@ Scrambler.generateUrl = function(req, obj) {
 }
 
 Scrambler.getTokenObject = function(req) {
+  if (!req.headers.authorization) return;
   var store = req.headers.authorization.split(' ')[1];
+  if (!store || store === undefined || store === null || store === "null") return;
   var deciphered = this.decipherText(store);
   var decipheredJson = JSON.parse(deciphered);
   return decipheredJson;
