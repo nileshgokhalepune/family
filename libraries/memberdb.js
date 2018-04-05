@@ -55,7 +55,6 @@ memberModel.findMember = function(objectId) {
     }, {
       "password": 0,
       "salt": 0,
-      "_id": 0,
       "family.userId": 0
     }, function(err, member) {
       if (err) reject(err);
@@ -64,6 +63,24 @@ memberModel.findMember = function(objectId) {
     });
   });
 };
+
+memberModel.findByRelation = function(userId, relation){
+  return Promise((resolve,reject) => {
+    memberModel.findOne({ _id : new ObjectId(userid )},{family:1}, (err, result) => {
+      if(err){
+        reject(err); 
+      }
+      if(result){
+        var exists = result.forEach(element => element.relation === relation);
+        if(exists ){
+          resolve(exists.userId);
+        }else {
+          reject(null );
+        }
+      }
+    });
+  });
+}
 
 memberModel.save = function(user, callback) {
   if (user) {
@@ -158,40 +175,76 @@ var relationLookupSchema = new mongoose.Schema({
 
 var relationLookupModel = mongoose.model('relationmap', relationLookupSchema, 'relationmap');
 
-relationLookupModel.lookup = function(relation, callback) {
-  relationLookupModel.find({
-    "maps.from": relation
-  }, {
-    "maps.to": 1,
-    "maps.from": -1
-  }, (err, res) => {
-    if (err) {
-      console.log("Relation not found");
-      callback('Not found', null);
-    }
-    if (!res || res.length <= 0) {
-      relationLookupModel.find({
-        "maps.to": relation
-      }, {
-        "maps.from": 1,
-        "maps.to": -1
-      }, (err1, res1) => {
-        if (err1) {
-          callback('Not found', null);
-          return;
+relationLookupModel.lookup = function(relation, sourcegender, callback) {
+  relationLookupModel.aggregate([ { $project: { maps: { $filter: { input:'$maps', as: 'map', cond: { $eq: [ "$$map.from","Daughter"] } } } } } ],
+      function(err, res){
+        if(err){
+          console.log("Relation not found");
+          callback('Not Found',null);
         }
-        if (!res1 || res1.length <= 0) {
-          callback('Not found', null);
-          return;
+        if(!res || res.length <= 0 || res[0].maps.length <= 0){
+          relationLookupModel.aggregate([ { $project: { maps: { $filter: { input:'$maps', as: 'map', cond: { $eq: [ "$$map.to","Daughter"] } } } } } ],
+            (err1, res1)=> {
+              if(err1){
+                callback('Not found',null);
+                return;
+              }
+              if(!res1 || res1.length <= 0 || res1[0].maps.length <=0 ){
+                callback('Not found',null);
+                return;
+              }else {
+                debugger  ;
+                var relation;
+                var relations = helper.getRelationFromGender(sourcegender);
+                for(var i =0; i< relations.length; i++){
+                  for(var j =0; j< res1[0].maps.length; j++){
+                    if(res1[0].maps[j].from ===relations[i]){
+                      relation =  relations[i];
+                      break;
+                    }
+                  }
+                }
+                callback(null, relation);
+              }
+            });
         } else {
-          callback(null, res1[0].from);
-          return;
+          var relations = helper
         }
       });
-    } else {
-      callback(null, res[0].to);
-    }
-  });
+
+  // relationLookupModel.find({
+  //   "maps.from": relation
+  // }, {
+  //   "maps.to": 1,
+  //   "maps.from": -1
+  // }, (err, res) => {
+  //   if (err) {
+  //     console.log("Relation not found");
+  //     callback('Not found', null);
+  //   }
+  //   if (!res || res.length <= 0) {
+  //     relationLookupModel.find({
+  //       "maps.to": relation
+  //     }, {
+  //       "maps.from": 1,
+  //       "maps.to": -1
+  //     }, (err1, res1) => {
+  //       if (err1) {
+  //         callback('Not found', null);
+  //         return;
+  //       }
+  //       if (!res1 || res1.length <= 0) {
+  //         callback('Not found', null);
+  //         return;
+  //       } else {
+  //         callback(null, res1[0].from);
+  //         return;
+  //       }
+  //     });
+  //   } else {
+  //     callback(null, res[0].to);
+  //   }
+  // });
 }
 
 module.exports.relationLookup = relationLookupModel;
@@ -219,6 +272,22 @@ helper.findGender = function(relation) {
   if (female.find((g) => g === relation))
     return "Female";
   return "Unspecified";
+}
+
+helper.getRelationFromGender = function(gender){
+  var male = ["Husband", "Brother", "Nephew", "Father", "Son", "Uncle"];
+  var female = ["Wife", "Sister", "Neice", "Mother", "Daughter", "Aunt"];
+
+  return gender === 'Male' ? male : gender === "Female" ? female : [];
+}
+
+helper.opposites = function(towhat){
+  var male = ["Husband", "Brother", "Nephew", "Father", "Son", "Uncle"];
+  var female = ["Wife", "Sister", "Neice", "Mother", "Daughter", "Aunt"];
+
+  var ml = male.forEach(m=> m === towhat);
+  var fm = female.forEach(m=> m === towhat);
+  return ml ? ml : fm;
 }
 
 helper.getClientIP = function(request) {

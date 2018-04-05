@@ -153,33 +153,34 @@ router.post('/invite', function(req, res, next) {
   }
   var userId = token.memberId;
   guest.userId = userId;
-  db.memberModel.findMember(userId, function(err, member) {
-    db.inviteModel.findInvites(userId, function(err, result) {
-      if (result) {
-        var inviteExists = result.filter(doc => {
-          return doc._doc.guestRelation === guest.memberrelation
-        });
-        if (inviteExists.length > 0) {
-          res.statusCode = 500;
-          res.statusMessage = "You have already sent an invite to your wife. You can see that in the invite list in your profile";
-          res.send();
-          return;
-        }
-      }
-      db.inviteModel.save(guest, function(err, data) {
-        if (err) {
-          res.statusCode = 500;
-          res.statusMessage = "Unable to send invite at this time";
-          res.send();
-          return;
-        }
-        if (data) {
-          var url = scrambler.generateUrl(req, {
-            userId: userId,
-            inviteId: data._doc._id,
-            expires: moment().add(10, 'd')
+  db.memberModel.findMember(userId)
+    .then(member => {
+      db.inviteModel.findInvites(userId, function(err,result){
+        if(result){
+          var inviteExists = result.filter(doc=> {
+            return doc._doc.guestRelation === guest.memberrelation;
           });
-          sendmail({
+          if(inviteExists.length > 0){
+            res.statusCode = 500;
+            res.statusMessage = "You have already sent an invite to your wife. You can see that in the invite list in your profile";
+            res.send();
+            return;
+          }
+        }
+        db.inviteModel.save(guest,function(err,data){
+          if(err){
+            res.statusCode = 500;
+            res.statusMessage = "Unable to send invite at this time";
+            res.send();
+            return;
+          }
+          if(data){
+            var url = scrambler.generateUrl(req,{
+              userId: userId,
+              inviteId: data._doc._id,
+              expires: moment().add(10,'d')
+            });
+            sendmail({
             from: 'nileshgokhale45@gmail.com',
             to: guest.memberEmail,
             subject: `Invitation from a family member ${member.name} ${member.lastName}`,
@@ -196,14 +197,14 @@ router.post('/invite', function(req, res, next) {
               message: `Successfully invited ${guest.guestName} to be part of your family!!!`
             })
           });
-        } else {
-          res.status = 500;
-          res.statusMessage = "Unable to send invitation at this time.";
-          res.send();
-        }
-      });
-    })
-  });
+          } else {
+            res.status = 500;
+            res.statusMessage = "Unable to send invitation at this time.";
+            res.send();
+          }
+        });
+      }); 
+    });
 });
 
 router.post('/create', function(req, res, next) {
@@ -236,66 +237,68 @@ router.post('/relate', function(req, res, next) {
   var relation = req.body.relation;
   db.memberModel.findMember(originalUserId).then(original => {
     db.memberModel.findMember(newUserId).then(newuser => {
-
+      db.relationLookup.lookup(relation, original.gender,function(err,found){
+        if (err) {
+          res.statusCode = 404;
+          res.statusMessage = "Relation not found";
+          res.send();
+          return;
+        }
+        var relativeExists = original.family.find((record) => record.userId === newuser._id.toString());
+        if (!relativeExists) {
+          var relative = {
+            userId: newUserId,
+            relation: relation,
+            name: newuser._doc.name,
+            type: db.helper.findType(relation)
+          };
+          original.family.push(relative);
+        }
+        relativeExists = newuser.family.find((record) => record.userId === original._id.toString());
+        if (!relativeExists) {
+          relative = {
+            userId: original._id,
+            relation: found,
+            name: original._doc.name,
+            type: db.helper.findType(found)
+          }
+          newuser.family.push(relative);
+          newuser.save();
+          original.save();
+          res.statusCode = 200;
+          res.statusMessage = "Relation added";
+          res.send();
+        }
+      });
     }).catch(err => {
-      throw "The ew member was not found";
+      throw "The new member was not found";
     })
   }).catch(err => {
     res.status = 404;
     res.statusMessage = "User who invited was not found";
     res.send();
   })
-  db.memberModel.findMember(originalUserId, function(err, member) {
-    if (err || !member) {
-      res.statusCode = 404;
-      res.statusMessage = "User who invited was not found";
-      res.send();
-      return;
-    } else {
-      db.memberModel.findMember(newUserId, function(err, other) {
-        if (err || !other) {
-          res.statusCode = 404;
-          res.statusMessage = "The new member was not found";
-          res.send();
-          return;
-        } else {
-          db.relationLookup.lookup(relation, function(err, found) {
-            if (err) {
-              res.statusCode = 404;
-              res.statusMessage = "Relation not found";
-              res.send();
-              return;
-            }
-            var relativeExists = member.family.find((record) => record.userId === other._id.toString());
-            if (!relativeExists) {
-              var relative = {
-                userId: newUserId,
-                relation: relation,
-                name: other._doc.name,
-                type: db.helper.findType(relation)
-              };
-              member.family.push(relative);
-            }
-            relativeExists = other.family.find((record) => record.userId === member._id.toString());
-            if (!relativeExists) {
-              relative = {
-                userId: member._id,
-                relation: found,
-                name: member._doc.name,
-                type: db.helper.findType(found)
-              }
-              other.family.push(relative);
-              other.save();
-              member.save();
-              res.statusCode = 200;
-              res.statusMessage = "Relation added";
-              res.send();
-            }
-          });
-        }
-      });
-    }
-  });
+  // db.memberModel.findMember(originalUserId, function(err, member) {
+  //   if (err || !member) {
+  //     res.statusCode = 404;
+  //     res.statusMessage = "User who invited was not found";
+  //     res.send();
+  //     return;
+  //   } else {
+  //     db.memberModel.findMember(newUserId, function(err, other) {
+  //       if (err || !other) {
+  //         res.statusCode = 404;
+  //         res.statusMessage = "The new member was not found";
+  //         res.send();
+  //         return;
+  //       } else {
+  //         db.relationLookup.lookup(relation, function(err, found) {
+            
+  //         });
+  //       }
+  //     });
+  //   }
+  // });
 });
 
 router.get('/valid', function(req, res, next) {

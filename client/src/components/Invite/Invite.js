@@ -2,15 +2,27 @@ import React, { Component } from 'react';
 import { Security } from '../../service/Security';
 import { Loading } from '../Loading';
 import './invite.css';
+import RCG from 'react-captcha-generator';
+
+const Captcha = require('react-captcha');
 
 class Invite extends Component {
   parms= {};
 
+  constructor(props){
+    super(props);
+    this.state  ={
+      captcha : ''
+    };
+    this.handleClick = this.handleClick.bind(this);
+    this.result = this.result.bind(this);
+    this.check = this.check.bind(this);
+  }
   navigateAway() {
     this.props.history.push('/');
   }
 
-  componentWillMount() {
+  componentWillMount() { 
     var current = Security.getCurrent();
     if (!current) {
       this.navigateAway();
@@ -21,7 +33,7 @@ class Invite extends Component {
     });
     this.setState({
       loading: true,
-      lockFields: true
+      lockFields: false
     });
 
     this.setState({
@@ -38,12 +50,17 @@ class Invite extends Component {
   }
   navigateToBoard(event) {
     event.preventDefault();
-
     if (!this.parms.memberrelation || !this.parms.memberName || !this.parms.memberEmail) {
       alert('All fields are mandatory, to continue with the invitation');
       return;
-    } else {
-      this.setState({
+    } 
+    
+    if(!this.captchaEnter.value){
+      alert('The text you entered does not match the text in the image');
+      return;
+    } 
+
+    this.setState({
         loading: true
       });
       Security.invite(this.parms, window.location.host, Security.get()).then(data => {
@@ -53,7 +70,6 @@ class Invite extends Component {
         alert(err);
         this.navigateAway()
       });
-    }
   }
 
   onFieldChange(event) {
@@ -86,7 +102,7 @@ class Invite extends Component {
         <div>
           <h4>Can't find your family member, try inviting them!!</h4>
         </div>
-        <div className="inviteForm">
+        <div className="inviteForm container">
           <form onChange={(event) => this.onFieldChange(event)}>
               <div style={{
           textAlign: 'left',
@@ -118,17 +134,48 @@ class Invite extends Component {
                       <label htmlFor="memberEmail">Email:
                           <input className="form-control"  type="email" name="memberEmail" readOnly={this.state.lockFields}/>
                       </label>
+                      <div className="row">
+                        <input type="text" className="form-control" ref={ref => this.captchaEnter = ref} />
+                      </div>
                       </div>
                         <button className="btn btn-primary" onClick={this.navigateToBoard.bind(this)}>Send Invite</button>
                         <button className="btn btn-default" onClick={this.navigateAway.bind(this)}>Cancel</button>
                     </div>
                 </div>
             </form>
+            <div className="card"> 
+                  <Captcha
+                    sitekey = '6Lf-Pk4UAAAAAHaw0HlDd_n9kpVSt3E7MZzp0Fd3'
+                    lang = 'en'
+                    theme = 'light'
+                    type = 'image'
+                    callback = {(value) => this.confirm(this)}/>
+            </div>
           </div>
           {showLoading}
         </div>
         );
   }
+
+  confirm(value){
+    this.captchaEnter.value=Math.random();
+  }
+
+  handleClick(e){
+    e.preventDefault();
+    this.check();
+  }
+
+  result(text){
+    this.setState({
+      captcha: text
+    });
+  }
+
+  check(){
+    console.log(this.state.captcha, this.captchaEnter.value, this.state.captcha === this.captchaEnter.value)    
+  }
+
 }
 
 export default Invite;

@@ -10,12 +10,14 @@ class Register extends Component {
         _this.setState({
           regData: data
         })
+        this.parms = data;
       })
   }
   parms = {
   };
 
   registerUser(event) {
+    debugger;
     event.preventDefault();
     Security.register(this.state.regData).then(data => {
       Security.relate(this.state.regData.userId, data._id, this.state.regData.relation)
@@ -33,7 +35,7 @@ class Register extends Component {
   onFieldChange(event) {
     this.parms[event.target.name] = event.target.value;
     this.setState({
-      regData: this.parms
+      regData : this.parms
     });
   }
 

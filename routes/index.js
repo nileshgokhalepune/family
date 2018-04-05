@@ -19,9 +19,12 @@ router.get('/registerd', function(req, res, next) {
     return;
   }
   var viewModel = {};
-  db.memberModel.findMember(decipher.userId, function(err, member) {
+  db.memberModel.findMember(decipher.userId)
+    .then(memeber=> {
     db.inviteModel.findInvite(decipher.inviteId, function(err, invite) {
       if (invite && invite._doc) {
+        var opposite =  helper.opposites(invite.guestRelation);
+        db.memeberModel.findByRelation(opposite);
         viewModel.name = invite.guestName.split(' ')[0];
         viewModel.lastName = invite.guestName.split(' ')[1];
         viewModel.email = invite.guestEmail;
@@ -35,6 +38,8 @@ router.get('/registerd', function(req, res, next) {
         res.end();
       }
     });
+  }).catch(err=> {
+    
   });
 });
 module.exports = router;

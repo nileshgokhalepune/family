@@ -35,9 +35,11 @@ var submituserform = function() {
 }
 
 var registerUser = function(event) {
+  debugger;
   event.preventDefault();
   $("#registerBtn").attr("disabled", "disabled");
   if ($('form').valid()) {
+    debugger;
     var str = $('form').serialize();
     $.ajax({
       url: '/users/create',
