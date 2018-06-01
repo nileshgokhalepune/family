@@ -3,6 +3,9 @@ import { Security } from '../../service/Security';
 import './Login.css';
 
 class Login extends Component {
+  constructor(props){
+    super(props);
+  }
   parms={
   };
   loggedIn = false;

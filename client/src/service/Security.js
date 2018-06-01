@@ -82,13 +82,14 @@ export const Security = {
         .then(this.parseJson)
         .then(data => resolve(data))
         .catch(err => reject(err));
-    });
+    }); 
   },
   getData() {
     return new Promise((resolve, reject) => {
       fetch('/users/data', {
         headers: this.getHeaders()
-      }).then(res => res.json())
+      }).then(this.checkstatus)
+        .then(this.parseJson)
         .then(data => resolve(data))
         .catch(err => reject(err));
     });
@@ -171,10 +172,32 @@ export const Security = {
         .catch(err => reject(err));
     })
   },
-  setCurrent(current){
-    this.current =current;
+  setCurrent(current) {
+    this.current = current;
   },
-  getCurrent(){
+  getCurrent() {
     return this.current;
+  },
+  findByName(name) {
+    return new Promise((resolve, reject) => {
+      fetch('/users/find/' + name, {
+        method: 'GET',
+        header: this.getHeaders()
+      }).then(this.checkstatus)
+        .then(this.parseJson)
+        .then(data => resolve(data))
+        .catch(err => reject(err))
+    });
+  },
+  getPossibleRelations() {
+    return new Promise((resolve, reject) => {
+      fetch('/users/connections', {
+        method: 'GET',
+        headers: this.getHeaders()
+      }).then(this.checkstatus)
+        .then(this.parseJson)
+        .then(data => resolve(data))
+        .catch(err => reject(err))
+    });
   }
 }

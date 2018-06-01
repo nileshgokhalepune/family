@@ -15,76 +15,99 @@ var memberSchema = new mongoose.Schema({
   family: Array,
   type: String,
   gender: String,
-  imageSource: String
+  imageSource: String,
+  email: String
 });
 
 var memberModel = mongoose.model('member', memberSchema, 'member');
 
-memberModel.auth = function(username, password) {
+memberModel.auth = function (username, password) {
   return new Promise((resolve, reject) => {
     var user = memberModel.findOne({
       userName: username
     }, {
-      password: 1,
-      salt: 1,
-      name: 1
-    }, function(err, member) {
-      if (err) {
-        reject({
-          code: 500,
-          message: "Server Error"
-        });
-        console.bind(console, 'Error while trying to retrieve user!');
-      } else if (!member) {
-        reject({
-          code: 404,
-          message: "Not found"
-        });
-      } else {
-        resolve(member);
-      }
-    });
+        password: 1,
+        salt: 1,
+        name: 1
+      }, function (err, member) {
+        if (err) {
+          reject({
+            code: 500,
+            message: "Server Error"
+          });
+          console.bind(console, 'Error while trying to retrieve user!');
+        } else if (!member) {
+          reject({
+            code: 404,
+            message: "Not found"
+          });
+        } else {
+          resolve(member);
+        }
+      });
   })
 
 }
 
-memberModel.findMember = function(objectId) {
+memberModel.findMember = function (objectId) {
   return new Promise((resolve, reject) => {
     var user = memberModel.findOne({
       _id: objectId
     }, {
-      "password": 0,
-      "salt": 0,
-      "family.userId": 0
-    }, function(err, member) {
-      if (err) reject(err);
-      resolve(member);
-    //callback(err, member);
-    });
+        "password": 0,
+        "salt": 0,
+      }, function (err, member) {
+        if (err) reject(err);
+        resolve(member);
+      });
   });
 };
 
-memberModel.findByRelation = function(userId, relation){
-  return Promise((resolve,reject) => {
-    memberModel.findOne({ _id : new ObjectId(userid )},{family:1}, (err, result) => {
-      if(err){
-        reject(err); 
+memberModel.findByMemberName = (userId, invite, relation) => {
+  return new Promise((resolve, reject) => {
+    memberModel.findOne({ _id: userId, firstName }, { _id: 1, family: 1 }, (err, result) => {
+      if (err) {
+        reject(err);
+        return;
       }
-      if(result){
-        var exists = result.forEach(element => element.relation === relation);
-        if(exists ){
-          resolve(exists.userId);
-        }else {
-          reject(null );
+      if (result) {
+        for (var i = 0; i < result.family.length; i++) {
+          if (result.family[i]) {
+            var found = memberModel.findOne({ _id: result.family[i].userId }).exec().then(found => {
+              resolve(found);
+            });
+          }
+        }
+        reject("Not found");
+      }
+    });
+  });
+}
+
+memberModel.findByName = function (name) {
+  var input = name;
+  return new Promise((resolve, reject) => {
+    var name = input.split(' ');
+    var firstName = name.length > 0 ? name[0] : '';
+    var lastName = name.length > 1 ? name[1] : '';
+    if (!(firstName + lastName)) reject('Not found');
+    memberModel.findOne({ name: firstName, lastName: lastName }, { password: 0, salt: 0 }, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        if (result) {
+          resolve(result);
+        } else {
+          reject('Not found');
         }
       }
     });
   });
 }
 
-memberModel.save = function(user, callback) {
+memberModel.save = function (user, callback) {
   if (user) {
-    user.save(function(err, doc) {
+    user.save(function (err, doc) {
       if (err) callback(err, null);
       var member = doc.toObject();
       delete member.password;
@@ -97,7 +120,7 @@ memberModel.save = function(user, callback) {
 }
 
 
-memberModel.addFamilyMember = function(user, familyMember, callback) {
+memberModel.addFamilyMember = function (user, familyMember, callback) {
   if (user && familyMember) {
 
   }
@@ -116,7 +139,7 @@ var inviteSchema = new mongoose.Schema({
 
 var inviteModel = mongoose.model('invite', inviteSchema, 'invite');
 
-inviteModel.save = function(data, callback) {
+inviteModel.save = function (data, callback) {
   var objectId = new mongoose.Types.ObjectId();
   var guest = new inviteModel({
     _id: objectId,
@@ -125,9 +148,9 @@ inviteModel.save = function(data, callback) {
     guestRelation: data.memberrelation,
     userId: data.userId
   });
-  guest.save(function(err, data) {
+  guest.save(function (err, data) {
     if (err) {
-      console.log(err) ;
+      console.log(err);
       callback(err, null);
     }
     console.log('Saved');
@@ -135,10 +158,10 @@ inviteModel.save = function(data, callback) {
   });
 }
 
-inviteModel.findInvites = function(userid, callback) {
+inviteModel.findInvites = function (userid, callback) {
   inviteModel.find({
     userId: userid
-  }, function(err, invite) {
+  }, function (err, invite) {
     if (err) {
       callback(err, null);
     } else {
@@ -146,10 +169,10 @@ inviteModel.findInvites = function(userid, callback) {
     }
   });
 }
-inviteModel.findInvite = function(inviteId, callback) {
+inviteModel.findInvite = function (inviteId, callback) {
   inviteModel.find({
     _id: inviteId
-  }, function(err, invite) {
+  }, function (err, invite) {
     if (err) {
       callback(err, null);
     } else if (invite.length > 1) {
@@ -160,7 +183,7 @@ inviteModel.findInvite = function(inviteId, callback) {
   });
 }
 
-inviteModel.deactivateInvite = function(inviteId, callback) {
+inviteModel.deactivateInvite = function (inviteId, callback) {
   inviteModel.find({
     _id: inviteId
   }, fu)
@@ -175,76 +198,41 @@ var relationLookupSchema = new mongoose.Schema({
 
 var relationLookupModel = mongoose.model('relationmap', relationLookupSchema, 'relationmap');
 
-relationLookupModel.lookup = function(relation, sourcegender, callback) {
-  relationLookupModel.aggregate([ { $project: { maps: { $filter: { input:'$maps', as: 'map', cond: { $eq: [ "$$map.from","Daughter"] } } } } } ],
-      function(err, res){
-        if(err){
-          console.log("Relation not found");
-          callback('Not Found',null);
-        }
-        if(!res || res.length <= 0 || res[0].maps.length <= 0){
-          relationLookupModel.aggregate([ { $project: { maps: { $filter: { input:'$maps', as: 'map', cond: { $eq: [ "$$map.to","Daughter"] } } } } } ],
-            (err1, res1)=> {
-              if(err1){
-                callback('Not found',null);
-                return;
-              }
-              if(!res1 || res1.length <= 0 || res1[0].maps.length <=0 ){
-                callback('Not found',null);
-                return;
-              }else {
-                debugger  ;
-                var relation;
-                var relations = helper.getRelationFromGender(sourcegender);
-                for(var i =0; i< relations.length; i++){
-                  for(var j =0; j< res1[0].maps.length; j++){
-                    if(res1[0].maps[j].from ===relations[i]){
-                      relation =  relations[i];
-                      break;
-                    }
+relationLookupModel.lookup = function (relation, sourcegender, callback) {
+  relationLookupModel.aggregate([{ $project: { maps: { $filter: { input: '$maps', as: 'map', cond: { $eq: ["$$map.from", "Daughter"] } } } } }],
+    function (err, res) {
+      if (err) {
+        console.log("Relation not found");
+        callback('Not Found', null);
+      }
+      if (!res || res.length <= 0 || res[0].maps.length <= 0) {
+        relationLookupModel.aggregate([{ $project: { maps: { $filter: { input: '$maps', as: 'map', cond: { $eq: ["$$map.to", "Daughter"] } } } } }],
+          (err1, res1) => {
+            if (err1) {
+              callback('Not found', null);
+              return;
+            }
+            if (!res1 || res1.length <= 0 || res1[0].maps.length <= 0) {
+              callback('Not found', null);
+              return;
+            } else {
+              var relation;
+              var relations = helper.getRelationFromGender(sourcegender);
+              for (var i = 0; i < relations.length; i++) {
+                for (var j = 0; j < res1[0].maps.length; j++) {
+                  if (res1[0].maps[j].from === relations[i]) {
+                    relation = relations[i];
+                    break;
                   }
                 }
-                callback(null, relation);
               }
-            });
-        } else {
-          var relations = helper
-        }
-      });
-
-  // relationLookupModel.find({
-  //   "maps.from": relation
-  // }, {
-  //   "maps.to": 1,
-  //   "maps.from": -1
-  // }, (err, res) => {
-  //   if (err) {
-  //     console.log("Relation not found");
-  //     callback('Not found', null);
-  //   }
-  //   if (!res || res.length <= 0) {
-  //     relationLookupModel.find({
-  //       "maps.to": relation
-  //     }, {
-  //       "maps.from": 1,
-  //       "maps.to": -1
-  //     }, (err1, res1) => {
-  //       if (err1) {
-  //         callback('Not found', null);
-  //         return;
-  //       }
-  //       if (!res1 || res1.length <= 0) {
-  //         callback('Not found', null);
-  //         return;
-  //       } else {
-  //         callback(null, res1[0].from);
-  //         return;
-  //       }
-  //     });
-  //   } else {
-  //     callback(null, res[0].to);
-  //   }
-  // });
+              callback(null, relation);
+            }
+          });
+      } else {
+        var relations = helper
+      }
+    });
 }
 
 module.exports.relationLookup = relationLookupModel;
@@ -254,7 +242,7 @@ helper.peers = ["Wife", "Husband", "Brother", "Sister", "Friend"];
 helper.children = ["Son", "Daughter", "StepSon", "StepDaughter"];
 helper.parents = ["Father", "Mother", "Uncle", "Aunt"];
 
-helper.findType = function(relation) {
+helper.findType = function (relation) {
   if (this.peers.find((p) => p === relation)) {
     return "peer";
   } else if (this.children.find((p) => p === relation)) {
@@ -264,7 +252,7 @@ helper.findType = function(relation) {
   }
 }
 
-helper.findGender = function(relation) {
+helper.findGender = function (relation) {
   var male = ["Husband", "Brother", "Nephew", "Father", "Son", "Uncle"];
   var female = ["Wife", "Sister", "Neice", "Mother", "Daughter", "Aunt"];
   if (male.find((g) => g === relation))
@@ -274,23 +262,35 @@ helper.findGender = function(relation) {
   return "Unspecified";
 }
 
-helper.getRelationFromGender = function(gender){
+helper.getRelationFromGender = function (gender) {
   var male = ["Husband", "Brother", "Nephew", "Father", "Son", "Uncle"];
   var female = ["Wife", "Sister", "Neice", "Mother", "Daughter", "Aunt"];
 
   return gender === 'Male' ? male : gender === "Female" ? female : [];
 }
 
-helper.opposites = function(towhat){
+helper.opposites = function (towhat) {
   var male = ["Husband", "Brother", "Nephew", "Father", "Son", "Uncle"];
   var female = ["Wife", "Sister", "Neice", "Mother", "Daughter", "Aunt"];
-
-  var ml = male.forEach(m=> m === towhat);
-  var fm = female.forEach(m=> m === towhat);
-  return ml ? ml : fm;
+  var ml;
+  var fm;
+  for (var i = 0; i < male.length; i++) {
+    if (male[i] === towhat) {
+      ml = female[i];
+      break;
+    }
+  }
+  for (var i = 0; i < female.length; i++) {
+    if (female[i] === towhat) {
+      ml = male[i]
+      break;
+    }
+  }
+  //female.forEach(m => m === towhat);
+  return ml;// ml ? ml : fm;
 }
 
-helper.getClientIP = function(request) {
+helper.getClientIP = function (request) {
   var ipAddr;
   var iplist = request.headers["x-forwarded-for"];
   if (iplist) {

@@ -67,7 +67,6 @@ class App extends Component {
     var component;
     var store = Security.get('user');
     if (this.props.location.pathname.indexOf('register') !== -1) {
-      debugger;
       Security.logout();
     }
     if (this.state && this.state.status === Status.Loading) {

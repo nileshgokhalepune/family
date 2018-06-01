@@ -27,5 +27,8 @@ block content
             input(type="text",class="invisible",value="#{viewModel.userId}",name="userId",id="userId")
             input(type="text",class="invisible",value="#{viewModel.relation}",name="relation",id="relation")
             input(type="text",class="invisible",name="newUserId",id="newUserId")
+            input(type="text",class="invisible",name="exists",id="exists")
         div
             button(class="btn btn-primary",id="registerBtn",onclick="registerUser(event)") Submit
+        label "Already a member login to accept!"
+            button(class="btn btn-success",id="login",onclick="loginToAccept(event)") Login

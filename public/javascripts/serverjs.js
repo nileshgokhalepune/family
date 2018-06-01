@@ -1,4 +1,21 @@
 $(document).ready(function() {
+  var userExists = $("#exists").val();
+  if(userExists){
+    $.ajax({
+      url: '/users/relate',
+      method: 'POST',
+      data: {
+        userId: userId,
+        newUserId: newUserId,
+        relation: relation
+      },
+      success: function(res) {
+        document.location = "/";
+      },
+      error: function(err) {}
+    });
+    return;
+  }
   $('#registerform').validate({
     rules: {
       name: {
