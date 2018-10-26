@@ -16,7 +16,7 @@ var transport = mailer.createTransport(smtpTransport({
   service: 'gmail',
   host: 'smtp.gmail.com',
   auth: {
-    user: 'nileshgokhale45@gmail.com',
+    user: 'someemail@gmail.com',
     password: 'xxxxxxx'
   }
 }));
