@@ -16,8 +16,8 @@ var transport = mailer.createTransport(smtpTransport({
   service: 'gmail',
   host: 'smtp.gmail.com',
   auth: {
-    user: 'someemail@gmail.com',
-    password: 'xxxxxxx'
+    user: 'someemail@gmail.com', /// need to fetch from somewhere.
+    password: 'xxxxxxx' //Need to fetch from somewhere
   }
 }));
 var token;
